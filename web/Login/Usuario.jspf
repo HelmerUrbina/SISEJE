@@ -1,0 +1,8 @@
+<%-- any content can be specified here e.g.: --%>
+<div class="image">
+    <img src="../Imagenes/user_military.png" width="50" height="50" alt="User" />
+</div>
+<div class="info-container">
+    <div class="name" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">${usuario.nombres} ${usuario.paterno}</div>
+    <div class="email">${usuario.correo}</div>
+</div>

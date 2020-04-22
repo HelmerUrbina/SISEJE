@@ -1,0 +1,32 @@
+<%-- any content can be specified here e.g.: --%>
+<div class="page-loader-wrapper">
+    <div class="loader">
+        <%@include file="../Login/Cargando.jspf" %>
+    </div>
+</div>
+<!-- Top Bar -->
+<nav class="navbar">
+    <%@include file="../Login/Banner.jspf" %>
+</nav>        
+<section>
+    <!-- Left Sidebar -->
+    <aside id="leftsidebar" class="sidebar">
+        <!-- User Info -->
+        <div class="user-info">
+            <%@include file="../Login/Usuario.jspf" %>
+        </div>
+        <!-- Menu -->
+        <div class="menu">
+            <%@include file="../Login/Menu.jspf" %>
+        </div>
+        <!-- Footer -->
+        <div class="legal">
+            <div class="copyright">
+                &copy; 2018 - 2019 <a href="javascript:void(0);">COPERE - DPDT</a>
+            </div>
+            <div class="version">
+                <b>Version: </b> 1.0.0
+            </div>
+        </div>
+    </aside>
+</section>

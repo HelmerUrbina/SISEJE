@@ -1,0 +1,6 @@
+<%-- any content can be specified here e.g.: --%>
+<div class="container-fluid">
+    <div class="navbar-header"> 
+        <a class="navbar-brand" href="../Login/Principal.jsp"><strong>[ SISEJE ]</strong> - SISTEMA DE SENTENCIAS JUDICIALES</a>
+    </div>
+</div>

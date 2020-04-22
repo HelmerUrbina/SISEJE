@@ -1,0 +1,40 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="d" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page pageEncoding="UTF-8" %>
+<ul class="list">
+    <li class="header">MENU DE NAVEGACION</li>
+    <li class="active">
+        <a href="../Login/Principal.jsp">
+            <i class="material-icons">home</i>
+            <span>Inicio</span>
+        </a>
+    </li>
+    <c:forEach var="m" items="${objModulo}">
+        <li>
+            <a href="javascript:void(0);" class="menu-toggle">
+                <i class="material-icons">toc</i><span>${m.descripcion}</span>
+            </a>
+            <ul class="ml-menu">
+                <d:forEach var="o" items="${objMenu}">
+                    <c:if test="${m.modulo==o.modulo}">
+                        <li>
+                            <a href="../${o.servlet}?mode=${o.modo}">${o.descripcion}</a>
+                        </li>
+                    </c:if>
+                </d:forEach>
+            </ul>
+        </li>
+    </c:forEach>
+    <li>
+        <a href="../CambiarPassword?mode=password">
+            <i class="material-icons">update</i>
+            <span>Cambiar Password</span>
+        </a>
+    </li>
+    <li>
+        <a href="../FinalizaSesion">
+            <i class="material-icons">exit_to_app</i>
+            <span>Cerrar Session</span>
+        </a>
+    </li>
+</ul>

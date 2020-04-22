@@ -1,0 +1,63 @@
+<svg version="1.1" id="logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 1316 496" style="enable-background:new 0 0 1316 496;" xml:space="preserve" >
+
+	<defs>
+	 	<style type="text/css">
+	 		.st0{fill:none;stroke:#fff;stroke-width:5;stroke-miterlimit:10;}
+			.st1{font-family:'arial black';}
+			.st2{font-size:88.8661px;}
+			.st3{font-size:88.0437px;}
+
+	 		.st0{
+	 			stroke-dasharray: 2000;
+	 			stroke-dashoffset: 0;
+	 			-webkit-animation: dash 4s linear forwards;
+	 			-o-animation: dash 4s linear forwards;
+	 			-moz-animation: dash 4s linear forwards;
+	 		}
+
+	 		#logo{
+	 		cursor:pointer;
+	 		}
+
+	 		#logo:hover .st0{
+	 			fill: rgba(22, 127, 57 ,.7);
+	 			transition: .8s;
+	 		}
+
+	 		#logo.clickit .st0{
+	 			fill: rgba(229, 243, 165 ,.5);
+	 			stroke: rgb(255, 255, 255);
+	 		}
+
+	 		@-webkit-keyframes dash{
+	 			from{
+	 				stroke-dashoffset: 2000;
+	 			}
+	 			to{
+	 				stroke-dashoffset: 0;
+	 			}
+	 		}
+	 	</style>
+
+	 	<script type="text/javascript">
+	 		var clicker = document.querySelector('#logo');
+	 		clicker.addEventListener('click', function(){
+	 			this.classList.toggle('clickit');
+	 		});
+	 	</script>
+
+	 </defs>
+
+<g>
+	<path class="st0" d="M463.9,277.3L272.2,469.1c-16.1,16.1-42.2,16.1-58.3,0L22.1,277.3C6,261.2,6,235.1,22.1,219L62,179.1
+		l45.1-45.1l46.5,46.5l-45.1,45.1l-0.3,0.3l-2.6,2.6c-10.7,10.7-10.7,28.2,0,38.9L224.2,386c10.7,10.7,28.2,10.7,38.9,0l119.3-119.3
+		l64.6-64.6l16.9,16.9C480,235.1,480,261.2,463.9,277.3z"/>
+	<path class="st0" d="M224.9,109.2l-3.2,3.2l110.2,110.2c13.4,13.4,13.4,35.2,0,48.6l-64.5,64.5c-13.4,13.4-35.2,13.4-48.6,0
+		L131.9,249l45.1-45.1l63.3,63.3l22.7-22.7L129.8,111.3l45.4-45.4l38.7-38.7c16.1-16.1,42.2-16.1,58.3,0l151.5,151.5l-45.2,45.2
+		L263.8,109.2C253.1,98.5,235.7,98.5,224.9,109.2z"/>
+</g>
+<text transform="matrix(1.2298 0 0 1 527.5854 160.8521)" class="st0 st1 st2">MODULO DE</text>
+<text transform="matrix(1.2400 0 0 1 527.5900 270.8400)" class="st0 st1 st3">SENTENCIAS</text>
+<text transform="matrix(1.2298 0 0 1 527.5854 380.8037)" class="st0 st1 st3">JUDICIALES</text>
+</svg>
