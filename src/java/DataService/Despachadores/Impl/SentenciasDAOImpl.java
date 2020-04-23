@@ -695,7 +695,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
 
     @Override
     public String iduResolucionesProcesoDescuentos(BeanSentencias objBeanSentencias, String usuario) {
-        sql = "{CALL SP_IDU_RESOLUCIONES_PROCESO_DE(?,?,?,?,?,?,?,?,?)}";
+        sql = "{CALL SP_IDU_RESOLUCIONES_PROCESO_DE(?,?,?,?,?,?,?,?,?,?)}";
         try (CallableStatement cs = objConnection.prepareCall(sql)) {
             cs.setString(1, objBeanSentencias.getPeriodo());
             cs.setString(2, objBeanSentencias.getMes());
@@ -704,8 +704,9 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setString(5, objBeanSentencias.getTipoPago());
             cs.setString(6, objBeanSentencias.getTipoRemuneracion());
             cs.setDouble(7, objBeanSentencias.getMonto());
-            cs.setString(8, usuario);
-            cs.setString(9, objBeanSentencias.getMode());
+            cs.setDouble(8, objBeanSentencias.getTipoCambio());
+            cs.setString(9, usuario);
+            cs.setString(10, objBeanSentencias.getMode());
             s = cs.executeUpdate();
             cs.close();
         } catch (SQLException e) {

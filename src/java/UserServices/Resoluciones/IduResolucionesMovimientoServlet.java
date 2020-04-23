@@ -61,6 +61,7 @@ public class IduResolucionesMovimientoServlet extends HttpServlet {
         objBnSentencias.setPeriodo(request.getParameter("periodo"));
         objBnSentencias.setMes(request.getParameter("mes"));
         objBnSentencias.setTipo(request.getParameter("tipo"));
+        objBnSentencias.setTipoCambio(Utiles.checkDouble(request.getParameter("tipoCambio")));
         objBnSentencias.setArchivo(request.getParameter("archivo"));
         objBnSentencias.setMonto(0.0);
         objDsSentencias = new SentenciasDAOImpl(objConnection);

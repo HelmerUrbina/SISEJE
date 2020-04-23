@@ -207,6 +207,7 @@
                     var mes = $('#cbo_Mes').val();
                     var tipo = $('#cbo_Tipo').val();
                     var archivo = $("#txt_Archivo").val();
+                    var tipoCambio = $("#txt_TipoCambio").val();
                     if (archivo !== '') {
                         var formData = new FormData(document.getElementById("frm_SentenciasMovimientoArchivo"));
                         formData.append("mode", 'S');
@@ -214,6 +215,7 @@
                         formData.append("mes", mes);
                         formData.append("tipo", tipo);
                         formData.append("flag", flag);
+                        formData.append("tipoCambio", tipoCambio);
                         formData.append("archivo", archivo);
                         $.ajax({
                             type: "POST",
@@ -373,7 +375,19 @@
                                                     <div class="modal-body">
                                                         <div class="row clearfix">
                                                             <div class="col-sm-2 form-control-label">
-                                                                <label for="asunto">Archivo</label>
+                                                                <label for="TipoCambio">Tipo de Cambio</label>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <div class="form-group">
+                                                                    <div class="form-line">
+                                                                        <input type="number" name="txt_TipoCambio" id="txt_TipoCambio" class="form-control" max="999.999" min="0.0" >
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row clearfix">
+                                                            <div class="col-sm-2 form-control-label">
+                                                                <label for="archivo">Archivo</label>
                                                             </div>
                                                             <div class="col-sm-10">
                                                                 <div class="form-group">
