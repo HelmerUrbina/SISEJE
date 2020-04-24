@@ -380,7 +380,7 @@
                                                             <div class="col-sm-3">
                                                                 <div class="form-group">
                                                                     <div class="form-line">
-                                                                        <input type="number" name="txt_TipoCambio" id="txt_TipoCambio" class="form-control" max="999.999" min="0.0" >
+                                                                        <input type="number" name="txt_TipoCambio" id="txt_TipoCambio" class="form-control" max="999.999" min="0.0" step="0.001">
                                                                     </div>
                                                                 </div>
                                                             </div>
