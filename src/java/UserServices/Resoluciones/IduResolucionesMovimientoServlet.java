@@ -64,6 +64,7 @@ public class IduResolucionesMovimientoServlet extends HttpServlet {
         objBnSentencias.setTipoCambio(Utiles.checkDouble(request.getParameter("tipoCambio")));
         objBnSentencias.setArchivo(request.getParameter("archivo"));
         objBnSentencias.setMonto(0.0);
+        objBnSentencias.setRemuneracion(0.0);
         objDsSentencias = new SentenciasDAOImpl(objConnection);
         result = objDsSentencias.iduResolucionesProcesoDescuentos(objBnSentencias, objUsuario.getUsuario());
         if (result == null) {

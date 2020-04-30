@@ -47,11 +47,11 @@ public class ImportarArchivo {
                 objBnSentencias.setMode("I");
                 objBnSentencias.setPeriodo(hssfRow.getCell(0).getStringCellValue().substring(0, 4));
                 objBnSentencias.setMes(hssfRow.getCell(0).getStringCellValue().substring(4, 6));
-                objBnSentencias.setTipoRemuneracion(hssfRow.getCell(2).getStringCellValue());
                 objBnSentencias.setTipoPago(hssfRow.getCell(1).getStringCellValue());
+                objBnSentencias.setTipoRemuneracion("" + hssfRow.getCell(2).getStringCellValue());
                 objBnSentencias.setCIP(hssfRow.getCell(3).getStringCellValue());
-                objBnSentencias.setRemuneracion(hssfRow.getCell(4).getNumericCellValue());
                 objBnSentencias.setMonto(hssfRow.getCell(5).getNumericCellValue());
+                objBnSentencias.setRemuneracion(hssfRow.getCell(6).getNumericCellValue());
                 k = objDsSentencias.iduResolucionesProcesoDescuentos(objBnSentencias, usuario);
             }
         } catch (FileNotFoundException fileNotFoundException) {
@@ -68,7 +68,6 @@ public class ImportarArchivo {
                 return "Error al procesar el fichero después de cerrarlo: " + ex.getMessage();
             }
         }
-        System.out.println("Finaliza proceso");
         return null;
     }
 
