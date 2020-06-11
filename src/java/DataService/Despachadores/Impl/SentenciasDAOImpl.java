@@ -324,9 +324,14 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 + "ORDER BY COD_ADM, DNI_DEMAN";
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, objBeanSentencias.getPeriodo());
+            objPreparedStatement.setString(2, objBeanSentencias.getMes());
+            objPreparedStatement.setString(3, objBeanSentencias.getTipo());
             objResultSet = objPreparedStatement.executeQuery();
             while (objResultSet.next()) {
                 objBnSentencias = new BeanSentencias();
+                objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
+                objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
                 objBnSentencias.setUnidad(objResultSet.getString("NUMERO"));
                 objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
                 objBnSentencias.setPersonal(objResultSet.getString("NOMBRE"));
@@ -339,8 +344,6 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setSituacion(objResultSet.getString("BENEFICIARIO"));
                 objBnSentencias.setTipoPago(objResultSet.getString("TIPO_PAGO"));
                 objBnSentencias.setOficio(objResultSet.getString("BANCO"));
-                objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
-                objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
                 objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
                 lista.add(objBnSentencias);
             }
