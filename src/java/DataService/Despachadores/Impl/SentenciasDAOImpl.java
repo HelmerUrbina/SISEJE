@@ -313,6 +313,53 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     }
 
     @Override
+    public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
+        lista = new LinkedList<>();
+        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES "
+                + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO=? AND "
+                + "CMES_CODIGO=? AND "
+                + "CSENTENCIA_TIPO=? "
+                + "ORDER BY COD_ADM, DNI_DEMAN";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnSentencias = new BeanSentencias();
+                objBnSentencias.setUnidad(objResultSet.getString("NUMERO"));
+                objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
+                objBnSentencias.setPersonal(objResultSet.getString("NOMBRE"));
+                objBnSentencias.setJuez(objResultSet.getString("DNI_DEMANDADO"));
+                objBnSentencias.setJuzgado(objResultSet.getString("RAZON_SOCIAL"));
+                objBnSentencias.setTipoRemuneracion(objResultSet.getString("DESC_CORTA"));
+                objBnSentencias.setTipo(objResultSet.getString("TIPO"));
+                objBnSentencias.setExpediente(objResultSet.getString("DNI_DEMAN"));
+                objBnSentencias.setNumeroResolucion(objResultSet.getString("CTANUMERO"));
+                objBnSentencias.setSituacion(objResultSet.getString("BENEFICIARIO"));
+                objBnSentencias.setTipoPago(objResultSet.getString("TIPO_PAGO"));
+                objBnSentencias.setOficio(objResultSet.getString("BANCO"));
+                objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
+                objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
+                objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
+                lista.add(objBnSentencias);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getListaResolucionesMovimientoValidacion() : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
     public BeanSentencias getPersonal(BeanSentencias objBeanSentencias) {
         sql = "SELECT CIP, DNI, PERSONAL, GRADO, ARMA, UNIDAD, SITUACION "
                 + "FROM V_PERSONAL WHERE "

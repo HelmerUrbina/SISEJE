@@ -19,6 +19,8 @@ public interface SentenciasDAO {
 
     public List getListaResolucionesProceso(BeanSentencias objBeanSentencias);
 
+    public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias);
+
     public BeanSentencias getPersonal(BeanSentencias objBeanSentencias);
 
     public BeanSentencias getSentencias(BeanSentencias objBeanSentencias);
@@ -46,7 +48,7 @@ public interface SentenciasDAO {
     public String iduResolucionesMovimientos(BeanSentencias objBeanSentencias, String usuario);
 
     public String iduResolucionesProcesoDescuentos(BeanSentencias objBeanSentencias, String usuario);
-    
+
     public String iduResolucionesProceso(BeanSentencias objBeanSentencias, String usuario);
 
 }
