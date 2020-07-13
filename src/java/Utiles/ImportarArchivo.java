@@ -31,7 +31,7 @@ public class ImportarArchivo {
         objConnection = objConnection1;
     }
 
-    public String ImportarArchivoExcel(BeanSentencias objBnSentencias, String usuario) throws FileNotFoundException, IOException {
+    public String ImportarArchivoExcel (BeanSentencias objBnSentencias, String usuario) throws FileNotFoundException, IOException {
         SentenciasDAO objDsSentencias = new SentenciasDAOImpl(objConnection);
         FileInputStream excelStream = null;
         try {
@@ -52,6 +52,7 @@ public class ImportarArchivo {
                 objBnSentencias.setCIP(hssfRow.getCell(3).getStringCellValue());
                 objBnSentencias.setMonto(hssfRow.getCell(5).getNumericCellValue());
                 objBnSentencias.setRemuneracion(hssfRow.getCell(6).getNumericCellValue());
+                objBnSentencias.setJuez(hssfRow.getCell(7).getStringCellValue());
                 k = objDsSentencias.iduResolucionesProcesoDescuentos(objBnSentencias, usuario);
             }
         } catch (FileNotFoundException fileNotFoundException) {

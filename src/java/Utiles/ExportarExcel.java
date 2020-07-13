@@ -55,7 +55,7 @@ public class ExportarExcel {
         Sheet pagina = workbook.createSheet("Descuentos");
         String[] titulos = {"Periodo", "Mes", "Tipo", "Numero", "Cod Adminstrativo",
             "Nombre", "DNI Demandado", "Juzgado", "Descripcion", "DNI Demandado",
-            "Beneficiario", "Tipo Pago", "Nro Cuenta", "Banco", "Importe"};
+            "Beneficiario", "Tipo Pago", "Nro Cuenta", "Banco", "Importe","Situacion"};
         Row fila = pagina.createRow(0);
         for (int i = 0; i < titulos.length; i++) {
             Cell celda = fila.createCell(i);
@@ -74,11 +74,12 @@ public class ExportarExcel {
             fila.createCell(7).setCellValue(proceso.getJuzgado());
             fila.createCell(8).setCellValue(proceso.getTipoRemuneracion());
             fila.createCell(9).setCellValue(proceso.getExpediente());
-            fila.createCell(10).setCellValue(proceso.getSituacion());
+            fila.createCell(10).setCellValue(proceso.getArma());
             fila.createCell(11).setCellValue(proceso.getTipoPago());
             fila.createCell(12).setCellValue(proceso.getNumeroResolucion());
             fila.createCell(13).setCellValue(proceso.getOficio());
             fila.createCell(14).setCellValue(proceso.getMonto());
+            fila.createCell(13).setCellValue(proceso.getSituacion());
         }
         for (int colNum = 0; colNum < fila.getLastCellNum(); colNum++) {
             workbook.getSheetAt(0).autoSizeColumn(colNum);

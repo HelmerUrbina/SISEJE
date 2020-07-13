@@ -316,7 +316,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
         sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
-                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION "
                 + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
@@ -341,10 +341,11 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setTipo(objResultSet.getString("TIPO"));
                 objBnSentencias.setExpediente(objResultSet.getString("DNI_DEMAN"));
                 objBnSentencias.setNumeroResolucion(objResultSet.getString("CTANUMERO"));
-                objBnSentencias.setSituacion(objResultSet.getString("BENEFICIARIO"));
+                objBnSentencias.setArma(objResultSet.getString("BENEFICIARIO"));
                 objBnSentencias.setTipoPago(objResultSet.getString("TIPO_PAGO"));
                 objBnSentencias.setOficio(objResultSet.getString("BANCO"));
                 objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
+                objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
                 lista.add(objBnSentencias);
             }
         } catch (SQLException e) {
@@ -745,7 +746,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
 
     @Override
     public String iduResolucionesProcesoDescuentos(BeanSentencias objBeanSentencias, String usuario) {
-        sql = "{CALL SP_IDU_RESOLUCIONES_PROCESO_DE(?,?,?,?,?,?,?,?,?,?,?)}";
+        sql = "{CALL SP_IDU_RESOLUCIONES_RETORNO(?,?,?,?,?,?,?,?,?,?,?,?)}";
         try (CallableStatement cs = objConnection.prepareCall(sql)) {
             cs.setString(1, objBeanSentencias.getPeriodo());
             cs.setString(2, objBeanSentencias.getMes());
@@ -755,9 +756,10 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setString(6, objBeanSentencias.getTipoRemuneracion());
             cs.setDouble(7, objBeanSentencias.getMonto());
             cs.setDouble(8, objBeanSentencias.getRemuneracion());
-            cs.setDouble(9, objBeanSentencias.getTipoCambio());
-            cs.setString(10, usuario);
-            cs.setString(11, objBeanSentencias.getMode());
+            cs.setString(9, objBeanSentencias.getJuez());
+            cs.setDouble(10, objBeanSentencias.getTipoCambio());
+            cs.setString(11, usuario);
+            cs.setString(12, objBeanSentencias.getMode());
             s = cs.executeUpdate();
             cs.close();
         } catch (SQLException e) {
