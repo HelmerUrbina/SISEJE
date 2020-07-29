@@ -34,8 +34,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author H-URBINA-M
  */
-@WebServlet(name = "SentenciasMovimientoValidacionServlet", urlPatterns = {"/SentenciasMovimientoValidacion"})
-public class SentenciasMovimientoValidacionServlet extends HttpServlet {
+@WebServlet(name = "SentenciasPlanillaMCPPServlet", urlPatterns = {"/SentenciasPlanillaMCPP"})
+public class SentenciasPlanillaMCPPServlet extends HttpServlet {
 
     private ServletConfig config = null;
     private ServletContext context = null;
@@ -72,10 +72,11 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
         objBnSentencias.setPeriodo(request.getParameter("periodo"));
         objBnSentencias.setMes(request.getParameter("mes"));
         objBnSentencias.setTipo(request.getParameter("tipo"));
-        objBnSentencias.setTipoCambio(Utiles.Utiles.checkDouble(request.getParameter("tipoCambio")));
+        objBnSentencias.setTipoRemuneracion(request.getParameter("concepto"));
+        objBnSentencias.setUnidad(request.getParameter("numero"));
         objDsSentencias = new SentenciasDAOImpl(objConnection);
         // DE ACUERO AL MODO, OBTENEMOS LOS DATOS NECESARIOS.  
-        if (objBnSentencias.getMode().equals("validacion")) {
+        if (objBnSentencias.getMode().equals("planillaMCPP")) {
             CombosDAO objCombos = new CombosDAOImpl(objConnection);
             if (request.getAttribute("objPeriodos") != null) {
                 request.removeAttribute("objPeriodos");
@@ -87,7 +88,10 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
             request.setAttribute("objTipo", objCombos.getAreaResolucion());
         }
         if (objBnSentencias.getMode().equals("G")) {
-            result = "" + TablaSentenciasMovimiento(objDsSentencias.getListaResolucionesMovimientos(objBnSentencias));
+            result = "" + TablaSentenciasMovimiento(objDsSentencias.getListaResolucionesPlanillaMCPP(objBnSentencias));
+        }
+        if (objBnSentencias.getMode().equals("B")) {
+            result = "" + TablaSentenciasPendientes(objDsSentencias.getListaResolucionesPlanillaMCPP(objBnSentencias));
         }
         if (objBnSentencias.getMode().equals("E")) {
             int nombreArchivo = (int) Math.floor(Math.random() * 100000000);
@@ -116,11 +120,10 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
                 fileToDownload.delete();
             }
         }
-        
         //SE ENVIA DE ACUERDO AL MODO SELECCIONADO
         switch (request.getParameter("mode")) {
-            case "validacion":
-                dispatcher = request.getRequestDispatcher("Resoluciones/SentenciasValidacion.jsp");
+            case "planillaMCPP":
+                dispatcher = request.getRequestDispatcher("Resoluciones/SentenciasPlanillaMCPP.jsp");
                 break;
             default:
                 dispatcher = request.getRequestDispatcher("error.jsp");
@@ -142,25 +145,74 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
             sb.append("<table class=\"table table-striped table-hover\">");
             sb.append("<thead>");
             sb.append("<tr>");
-            sb.append("<th style=\"text-align: center\">NUMERO</th>");
-            sb.append("<th style=\"text-align: center\">ESTADO</th>");
+            sb.append("<th style=\"text-align: center\">CIP</th>");
+            sb.append("<th style=\"text-align: center\">PERSONAL</th>");
+            sb.append("<th style=\"text-align: center\">DNI</th>");
+            sb.append("<th style=\"text-align: center\">DNI BENEFICIARO(A)</th>");
+            sb.append("<th style=\"text-align: center\">BENEFICIARO(A)</th>");
+            sb.append("<th style=\"text-align: center\">BANCO</th>");
+            sb.append("<th style=\"text-align: center\">NRO CTA</th>");
+            sb.append("<th style=\"text-align: center\">TIPO PAGO</th>");
+            sb.append("<th style=\"text-align: center\">IMPORTE</th>");
+            sb.append("<th style=\"text-align: center\">ACCIÓN</th>");
             sb.append("</tr>");
             sb.append("</thead>");
             sb.append("<tbody>");
-            for (int k = 1; k < lista.size(); k++) {
+            for (int k = 0; k < lista.size(); k++) {
                 BeanSentencias sentencia = (BeanSentencias) lista.get(k);
                 sb.append("<tr>");
-                sb.append("<td style=\"text-align: center\">").append(sentencia.getCuotas()).append("</td>");
-                sb.append("<td style=\"text-align: center\">").append(sentencia.getTipoRemuneracion()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getCIP()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getPersonal()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getJuez()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getExpediente()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getArma()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getOficio()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getNumeroResolucion()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getTipoPago()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getMonto()).append("</td>");
                 sb.append("<td style=\"text-align: center\">");
-                switch (sentencia.getCuotas()) {
-                    case 2:
-                        sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Exportar Datos a Excel\" onclick=\"javascript: fn_ExportarExcel();\">");
-                        sb.append("<i class=\"material-icons\">cloud_download</i>").append("</button> ");
-                        break;
-                    default:
-                        break;
+                if (!objBnSentencias.getUnidad().equals("0")) {
+                    sb.append("<button type=\"button\" class=\"btn bg-pink btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Eliminar Registro\" onclick=\"javascript: fn_EliminarRegistro(");
+                    sb.append(sentencia.getCIP()).append(",").append(sentencia.getSentencia()).append(",").append(sentencia.getResolucion()).append(");\">");
+                    sb.append("<i class=\"material-icons\">delete</i>").append("</button>").append("&nbsp;");
                 }
+                sb.append("</td>");
+                sb.append("</tr>");
+            }
+            sb.append("</tbody>");
+            sb.append("</table>");
+        }
+        return sb;
+    }
+    
+     private StringBuilder TablaSentenciasPendientes(List lista) {
+        StringBuilder sb = new StringBuilder();
+        if (lista != null) {
+            sb.append("<table class=\"table table-striped table-hover\">");
+            sb.append("<thead>");
+            sb.append("<tr>");
+            sb.append("<th style=\"text-align: center\">CIP</th>");
+            sb.append("<th style=\"text-align: center\">PERSONAL</th>");
+            sb.append("<th style=\"text-align: center\">DNI</th>");
+            sb.append("<th style=\"text-align: center\">DNI BENEFICIARO(A)</th>");
+            sb.append("<th style=\"text-align: center\">BENEFICIARO(A)</th>");
+            sb.append("<th style=\"text-align: center\">NRO CTA</th>");
+            sb.append("<th style=\"text-align: center\">TIPO PAGO</th>");
+            sb.append("<th style=\"text-align: center\">IMPORTE</th>");
+            sb.append("</tr>");
+            sb.append("</thead>");
+            sb.append("<tbody>");
+            for (int k = 0; k < lista.size(); k++) {
+                BeanSentencias sentencia = (BeanSentencias) lista.get(k);
+                sb.append("<tr>");
+                sb.append("<td><input type=\"checkbox\" id=\"div_checkbox_").append(sentencia.getCIP()).append("\" class=\"chk-col-blue\" value=\"").append(sentencia.getCIP()).append("---").append(sentencia.getSentencia()).append("---").append(sentencia.getResolucion()).append("\" /><label for=\"div_checkbox_").append(sentencia.getCIP()).append("\">").append(sentencia.getCIP()).append("</label></td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getPersonal()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getJuez()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getExpediente()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getArma()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getNumeroResolucion()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getTipoPago()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(sentencia.getMonto()).append("</td>");
                 sb.append("</td>");
                 sb.append("</tr>");
             }

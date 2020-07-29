@@ -599,6 +599,44 @@ public class CombosDAOImpl implements CombosDAO {
     }
 
     @Override
+    public List getConceptosSentencia(String periodo, String mes, String tipo) {
+        lista = new LinkedList<>();
+        sql = "SELECT CRESOLUCION_RETORNO_DISTRIBUCI AS CODIGO, UTIL.FUN_CONCEPTO_DISTRIBUCION(CRESOLUCION_RETORNO_DISTRIBUCI) AS DESCRIPCION "
+                + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO=? AND "
+                + "CMES_CODIGO=? AND "
+                + "CSENTENCIA_TIPO=? AND "
+                + "NRESOLUCION_MOVIMIENTO_PAGO>0 "
+                + "GROUP BY CRESOLUCION_RETORNO_DISTRIBUCI "
+                + "ORDER BY CODIGO";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, periodo);
+            objPreparedStatement.setString(2, mes);
+            objPreparedStatement.setString(3, tipo);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnComun = new BeanComun();
+                objBnComun.setCodigo(objResultSet.getString("CODIGO"));
+                objBnComun.setDescripcion(objResultSet.getString("DESCRIPCION"));
+                lista.add(objBnComun);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getConceptosSentencia('" + periodo + "','" + mes + "','" + tipo + "') : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
     public String getBeneficiario(String codigo) {
         String result = "";
         sql = "SELECT DISTINCT VBENEFICIARIO_PATERNO AS PATERNO, VBENEFICIARIO_MATERNO AS MATERNO, "
@@ -613,7 +651,7 @@ public class CombosDAOImpl implements CombosDAO {
             if (objResultSet.next()) {
                 result = objResultSet.getString("PATERNO") + "+++" + objResultSet.getString("MATERNO") + "+++"
                         + objResultSet.getString("NOMBRES") + "+++" + objResultSet.getDate("FECHA") + "+++"
-                        + objResultSet.getString("RAZON_SOCIAL") + "+++" + objResultSet.getString("RUC");                
+                        + objResultSet.getString("RAZON_SOCIAL") + "+++" + objResultSet.getString("RUC");
             }
         } catch (SQLException e) {
             System.out.println("Error al obtener getBeneficiario('" + codigo + "') : " + e.getMessage());

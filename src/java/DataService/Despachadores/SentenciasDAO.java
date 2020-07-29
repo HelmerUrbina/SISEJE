@@ -21,6 +21,8 @@ public interface SentenciasDAO {
 
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias);
 
+    public List getListaResolucionesPlanillaMCPP(BeanSentencias objBeanSentencias);
+
     public BeanSentencias getPersonal(BeanSentencias objBeanSentencias);
 
     public BeanSentencias getSentencias(BeanSentencias objBeanSentencias);
@@ -44,6 +46,8 @@ public interface SentenciasDAO {
     public int iduResolucionesDetalle(BeanSentencias objBeanSentencias, String usuario);
 
     public int iduCerrarResoluciones(BeanSentencias objBeanSentencias, String usuario);
+
+    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario);
 
     public String iduResolucionesMovimientos(BeanSentencias objBeanSentencias, String usuario);
 

@@ -1,13 +1,18 @@
-package Utiles;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package UserServices.Resoluciones;
 
-import BusinessServices.Beans.BeanComun;
+import BusinessServices.Beans.BeanSentencias;
 import BusinessServices.Beans.BeanUsuario;
-import DataService.Despachadores.CombosDAO;
-import DataService.Despachadores.Impl.CombosDAOImpl;
+import DataService.Despachadores.Impl.SentenciasDAOImpl;
+import DataService.Despachadores.SentenciasDAO;
+import Utiles.Utiles;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -18,16 +23,20 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet(name = "CombosServlet", urlPatterns = {"/Combos"})
-public class CombosServlet extends HttpServlet {
+/**
+ *
+ * @author H-URBINA-M
+ */
+@WebServlet(name = "IduResolucionesPlanillasServlet", urlPatterns = {"/IduResolucionesPlanillas"})
+public class IduResolucionesPlanillasServlet extends HttpServlet {
 
     private ServletConfig config = null;
     private ServletContext context = null;
     private HttpSession session = null;
     private RequestDispatcher dispatcher = null;
-    private List lista;
+    private BeanSentencias objBnSentencias;
     private Connection objConnection;
-    private CombosDAO objDsCombos;
+    private SentenciasDAO objDsSentencias;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -45,69 +54,37 @@ public class CombosServlet extends HttpServlet {
         session = request.getSession();
         BeanUsuario objUsuario = (BeanUsuario) session.getAttribute("objUsuario" + session.getId());
         if (objUsuario == null) {
-            dispatcher = request.getRequestDispatcher("/SISEJE/FinSession.jsp");
+            dispatcher = request.getRequestDispatcher("../FinSession.jsp");
             dispatcher.forward(request, response);
         }
         objConnection = (Connection) context.getAttribute("objConnection");
-        String accion = request.getParameter("accion");
-        String codigo = request.getParameter("codigo");
-        StringBuilder sb = new StringBuilder();
-        objDsCombos = new CombosDAOImpl(objConnection);
-        switch (accion) {
-            case "MESA_PARTES":
-                lista = objDsCombos.getMesaPartes(codigo, Integer.parseInt(request.getParameter("area")));
-                sb = combo(lista, "id=\"cbo_MesaPartes\" onchange=\"javascript: cargarMesaPartes();\"");
-                break;
-            case "JUZGADO":
-                lista = objDsCombos.getJuzgados(codigo);
-                sb = combo(lista, "id=\"cbo_Juzgados\"");
-                break;
-            case "AREAS":
-                lista = objDsCombos.getAreas(codigo);
-                sb = combo(lista, "id=\"cbo_Areas\"");
-                break;
-            case "BANCO":
-                lista = objDsCombos.getBancos();
-                sb = combo(lista, "id=\"cbo_Banco\"");
-                break;
-            case "CONCEPTO_PLANILLA":
-                lista = objDsCombos.getConceptosSentencia(request.getParameter("periodo"), request.getParameter("mes"), request.getParameter("tipo"));
-                sb = combo(lista, "id=\"cbo_Conceptos\" onchange=\"javascript: fn_BuscarDatos();\"");
-                break;
-            case "BENEFICIARIO":
-                sb.append(objDsCombos.getBeneficiario(codigo));
-                break;
-            case "BENEFICIARIO_CUENTA":
-                sb.append(objDsCombos.getBeneficiarioCuenta(request.getParameter("dni"), request.getParameter("banco")));
-                break;
-            case "BENEFICIARIO_SENTENCIA":
-                sb.append(objDsCombos.getBeneficiarioSentencia(request.getParameter("cip"), request.getParameter("sentencia")));
-                break;
-            case "RAZONSOCIAL":
-                sb.append(objDsCombos.getRazonSocial(codigo));
-                break;
-            default:
-                break;
+        String result = null;
+        objBnSentencias = new BeanSentencias();
+        objBnSentencias.setPeriodo(request.getParameter("periodo"));
+        objBnSentencias.setMes(request.getParameter("mes"));
+        objBnSentencias.setTipo(request.getParameter("tipo"));
+        objBnSentencias.setTipoRemuneracion(request.getParameter("concepto"));
+        objBnSentencias.setCuotas(Utiles.checkNum(request.getParameter("planilla")));
+        objDsSentencias = new SentenciasDAOImpl(objConnection);
+        String lista[][] = Utiles.generaLista(request.getParameter("lista"), 3);
+        for (String[] item : lista) {
+            objBnSentencias.setCIP(item[0].trim());
+            objBnSentencias.setSentencia(Utiles.checkNum(item[1]));
+            objBnSentencias.setResolucion(Utiles.checkNum(item[2]));
+            System.out.println(item[0].trim() + " " + item[1] + " " + item[2] + " " + objBnSentencias.getCuotas() + " " + objBnSentencias.getTipoRemuneracion());
+            System.out.println(objBnSentencias.getPeriodo()+ " " + objBnSentencias.getMes()+ " " + objBnSentencias.getTipo());
+            System.out.println(objBnSentencias.getCIP()+ " " + objBnSentencias.getSentencia()+ " " + objBnSentencias.getResolucion());
+            result = objDsSentencias.iduResolucionesPlanilla(objBnSentencias, objUsuario.getUsuario());
         }
-
+        System.out.println(result);
+        // EJECUTAMOS EL PROCEDIMIENTO SEGUN EL MODO QUE SE ESTA TRABAJANDO
+        // EN CASO DE NO HABER PROBLEMAS RETORNAMOS UNA NUEVA CONSULTA CON TODOS LOS DATOS.
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.print(sb);
-        }
-    }
 
-    private StringBuilder combo(List list, String atr) {
-        StringBuilder sb = new StringBuilder();
-        BeanComun comun;
-        if (list != null) {
-            for (int k = 0; k < list.size(); k++) {
-                comun = (BeanComun) list.get(k);
-                sb.append("<option value=\"").append(comun.getCodigo()).append("\">");
-                sb.append(comun.getDescripcion());
-                sb.append("</option>");
-            }
+        try (PrintWriter out = response.getWriter()) {
+            out.print(result);
         }
-        return sb;
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

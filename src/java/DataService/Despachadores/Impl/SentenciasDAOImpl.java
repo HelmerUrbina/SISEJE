@@ -316,7 +316,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
         sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
-                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION "
                 + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
@@ -346,10 +346,67 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setOficio(objResultSet.getString("BANCO"));
                 objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
                 objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
+                objBnSentencias.setMesaPartes(objResultSet.getString("COD_DISTRIBUCION"));
+                objBnSentencias.setGrado(objResultSet.getString("DISTRIBUCION"));
                 lista.add(objBnSentencias);
             }
         } catch (SQLException e) {
             System.out.println("Error al obtener getListaResolucionesMovimientoValidacion() : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
+    public List getListaResolucionesPlanillaMCPP(BeanSentencias objBeanSentencias) {
+        lista = new LinkedList<>();
+        sql = "SELECT COD_ADM, SENTENCIA, RESOLUCION, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION, DISTRIBUCION "
+                + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO=? AND "
+                + "CMES_CODIGO=? AND "
+                + "CSENTENCIA_TIPO=?  AND "
+                + "COD_DISTRIBUCION=? AND "
+                + "PLANILLA_MCPP=? "
+                + "ORDER BY COD_ADM, DNI_DEMAN";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, objBeanSentencias.getPeriodo());
+            objPreparedStatement.setString(2, objBeanSentencias.getMes());
+            objPreparedStatement.setString(3, objBeanSentencias.getTipo());
+            objPreparedStatement.setString(4, objBeanSentencias.getTipoRemuneracion());
+            objPreparedStatement.setString(5, objBeanSentencias.getUnidad());
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnSentencias = new BeanSentencias();
+                objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
+                objBnSentencias.setSentencia(objResultSet.getInt("SENTENCIA"));
+                objBnSentencias.setResolucion(objResultSet.getInt("RESOLUCION"));
+                objBnSentencias.setPersonal(objResultSet.getString("NOMBRE"));
+                objBnSentencias.setJuez(objResultSet.getString("DNI_DEMANDADO"));
+                objBnSentencias.setJuzgado(objResultSet.getString("RAZON_SOCIAL"));
+                objBnSentencias.setTipoRemuneracion(objResultSet.getString("DESC_CORTA"));
+                objBnSentencias.setTipo(objResultSet.getString("TIPO"));
+                objBnSentencias.setExpediente(objResultSet.getString("DNI_DEMAN"));
+                objBnSentencias.setNumeroResolucion(objResultSet.getString("CTANUMERO"));
+                objBnSentencias.setArma(objResultSet.getString("BENEFICIARIO"));
+                objBnSentencias.setTipoPago(objResultSet.getString("TIPO_PAGO"));
+                objBnSentencias.setOficio(objResultSet.getString("BANCO"));
+                objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
+                objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
+                objBnSentencias.setGrado(objResultSet.getString("DISTRIBUCION"));
+                lista.add(objBnSentencias);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getListaResolucionesPlanillaMCPP() : " + e.getMessage());
         } finally {
             try {
                 if (objResultSet != null) {
@@ -724,6 +781,28 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             return 0;
         }
         return s;
+    }
+
+    @Override
+    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario) {
+        sql = "{CALL SP_IDU_RESOLUCIONES_PLANILLA(?,?,?,?,?,?,?,?,?)}";
+        try (CallableStatement cs = objConnection.prepareCall(sql)) {
+            cs.setString(1, objBeanSentencias.getPeriodo());
+            cs.setString(2, objBeanSentencias.getMes());
+            cs.setString(3, objBeanSentencias.getCIP());
+            cs.setString(4, objBeanSentencias.getTipo());
+            cs.setInt(5, objBeanSentencias.getSentencia());
+            cs.setInt(6, objBeanSentencias.getResolucion());
+            cs.setString(7, objBeanSentencias.getTipoRemuneracion());
+            cs.setInt(8, objBeanSentencias.getCuotas());
+            cs.setString(9, usuario);
+            s = cs.executeUpdate();
+            cs.close();
+        } catch (SQLException e) {
+            System.out.println("Error al ejecutar iduResolucionesPlanilla : " + e.getMessage());
+            return e.getMessage();
+        }
+        return "GUARDO";
     }
 
     @Override

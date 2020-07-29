@@ -614,7 +614,6 @@
                         }
                     }
                 });
-
             }
             function GuardarResolucionDetalle() {
                 swal({
