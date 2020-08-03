@@ -143,6 +143,81 @@
                 var url = 'SentenciasMovimientoValidacion?mode=E&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo;
                 window.open(url, '_blank');
             }
+            function fn_ImportarExcel() {
+                flag = ".xlsx";
+                $('#txt_Archivo').val('');
+                $('#SubirArchivoSentenciasPlanilla .modal-content').removeAttr('class').addClass('modal-content modal-col-default');
+                $('#SubirArchivoSentenciasPlanilla').modal('show');
+            }
+            function fn_SubirArchivo() {
+                flag = fn_VerificaArchivo();
+                if (flag !== '' || flag.length !== 0) {
+                    swal("Aviso del Sistema", flag, "error");
+                } else {
+                    var msg = 'Debe Seleccionar un Archivo a subir\n Proceso cancelado!!!.';
+                    var periodo = $('#cbo_Periodo').val();
+                    var mes = $('#cbo_Mes').val();
+                    var tipo = $('#cbo_Tipo').val();
+                    var archivo = $("#txt_Archivo").val();
+                    if (archivo !== '') {
+                        var formData = new FormData(document.getElementById("frm_SentenciasPlanillaArchivo"));
+                        formData.append("mode", 'S');
+                        formData.append("periodo", periodo);
+                        formData.append("mes", mes);
+                        formData.append("tipo", tipo);
+                        formData.append("flag", flag);
+                        formData.append("archivo", archivo);
+                        $.ajax({
+                            type: "POST",
+                            url: "IduResolucionesPlanillaExcel",
+                            data: formData,
+                            dataType: "html",
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (data) {
+                                msg = data;
+                                if (msg === "GUARDO") {
+                                    swal({
+                                        title: "Aviso del Sistema!",
+                                        text: "Datos Guardados con Exito",
+                                        timer: 2000,
+                                        showConfirmButton: false,
+                                        imageUrl: "../Imagenes/thumbs-up.png"
+                                    });
+                                    $('#SubirArchivoSentenciasPlanilla').modal('hide');
+                                } else {
+                                    swal("Aviso del Sistema!", msg, "error");
+                                }
+                            }
+                        });
+                    } else {
+                        swal("Aviso del Sistema!", msg, "error");
+                    }
+                }
+            }
+            function fn_VerificaArchivo() {
+                var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
+                if (flag === ".xlsx") {
+                    regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
+                    if (regex.test($("#txt_Archivo").val().toLowerCase())) {
+                        if ($("#txt_Archivo").val().toLowerCase().indexOf(".xlsx") > 0) {
+                            return '';
+                        }
+                    }
+                    return "Por favor, cargue un archivo de Excel válido!";
+                } else if (flag === ".xls") {
+                    regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls)$/;
+                    if (regex.test($("#txt_Archivo").val().toLowerCase())) {
+                        if ($("#txt_Archivo").val().toLowerCase().indexOf(".xls") > 0) {
+                            return '';
+                        }
+                    }
+                    return "Por favor, cargue un archivo de Excel válido!";
+                } else {
+                    return "Por favor, carge un archivo válido!";
+                }
+            }
         </script>
     </head>
     <body class="theme-teal">
@@ -230,6 +305,43 @@
                                         </div>
                                         <!-- #END# Striped Rows -->
                                     </div>
+                                    <!-- Modal Dialogs  -->
+                                    <div class="modal fade" id="SubirArchivoSentenciasPlanilla" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <form id="frm_SentenciasPlanillaArchivo" name="frm_SentenciasPlanillaArchivo" enctype="multipart/form-data" action="javascript: fn_SubirArchivo();" method="post">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" id="defaultModalLabel">ADJUNTAR DOCUMENTO - SENTENCIAS PLANILLA MCPP</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row clearfix">
+                                                            <div class="col-sm-2 form-control-label">
+                                                                <label for="archivo">Archivo</label>
+                                                            </div>
+                                                            <div class="col-sm-10">
+                                                                <div class="form-group">
+                                                                    <div class="form-line">
+                                                                        <input type="file" name="txt_Archivo" id="txt_Archivo" class="form-control" maxlength="1000">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer ">
+                                                        <button type="submit" class="btn bg-blue waves-effect btn-sm col-md-40" >
+                                                            <i class="material-icons">save</i>
+                                                            <span>Registrar</span>
+                                                        </button>
+                                                        <button type="button" class="btn bg-red waves-effect btn-sm col-md-50" data-dismiss="modal">
+                                                            <i class="material-icons">cancel</i>
+                                                            <span>Cancelar</span>
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

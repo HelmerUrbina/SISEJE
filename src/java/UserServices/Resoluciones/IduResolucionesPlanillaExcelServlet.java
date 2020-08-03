@@ -7,28 +7,31 @@ package UserServices.Resoluciones;
 
 import BusinessServices.Beans.BeanSentencias;
 import BusinessServices.Beans.BeanUsuario;
-import DataService.Despachadores.Impl.SentenciasDAOImpl;
-import DataService.Despachadores.SentenciasDAO;
+import Utiles.ImportarArchivo;
 import Utiles.Utiles;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import java.util.Collection;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 /**
  *
  * @author H-URBINA-M
  */
-@WebServlet(name = "IduResolucionesPlanillasServlet", urlPatterns = {"/IduResolucionesPlanillas"})
-public class IduResolucionesPlanillasServlet extends HttpServlet {
+@WebServlet(name = "IduResolucionesPlanillaExcelServlet", urlPatterns = {"/IduResolucionesPlanillaExcel"})
+@MultipartConfig(location = "C:/SISEJE/Resoluciones/Planilla")
+public class IduResolucionesPlanillaExcelServlet extends HttpServlet {
 
     private ServletConfig config = null;
     private ServletContext context = null;
@@ -36,7 +39,7 @@ public class IduResolucionesPlanillasServlet extends HttpServlet {
     private RequestDispatcher dispatcher = null;
     private BeanSentencias objBnSentencias;
     private Connection objConnection;
-    private SentenciasDAO objDsSentencias;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -60,24 +63,35 @@ public class IduResolucionesPlanillasServlet extends HttpServlet {
         objConnection = (Connection) context.getAttribute("objConnection");
         String result = null;
         objBnSentencias = new BeanSentencias();
+        objBnSentencias.setMode(request.getParameter("mode"));
         objBnSentencias.setPeriodo(request.getParameter("periodo"));
         objBnSentencias.setMes(request.getParameter("mes"));
         objBnSentencias.setTipo(request.getParameter("tipo"));
-        objBnSentencias.setTipoRemuneracion(request.getParameter("concepto"));
-        objBnSentencias.setCuotas(Utiles.checkNum(request.getParameter("planilla")));
-        objDsSentencias = new SentenciasDAOImpl(objConnection);
-        String lista[][] = Utiles.generaLista(request.getParameter("lista"), 3);
-        for (String[] item : lista) {
-            objBnSentencias.setCIP(item[0].trim());
-            objBnSentencias.setSentencia(Utiles.checkNum(item[1]));
-            objBnSentencias.setResolucion(Utiles.checkNum(item[2]));
-            result = objDsSentencias.iduResolucionesPlanilla(objBnSentencias, objUsuario.getUsuario());
+        objBnSentencias.setArchivo(request.getParameter("archivo"));
+        objBnSentencias.setMonto(0.0);
+        objBnSentencias.setRemuneracion(0.0);
+        if (objBnSentencias.getMode().equals("S")) {
+            Collection<Part> parts = request.getParts();
+            for (Part part : parts) {
+                if (null != Utiles.getFileName(part)) {
+                    objBnSentencias.setArchivo(Utiles.getFileName(part));
+                    part.write(objBnSentencias.getPeriodo() + "-" + objBnSentencias.getMes() + "-" + objBnSentencias.getTipo() + "-" + objBnSentencias.getArchivo());
+                }
+            }
         }
-        // EJECUTAMOS EL PROCEDIMIENTO SEGUN EL MODO QUE SE ESTA TRABAJANDO
+        ImportarArchivo imp = new ImportarArchivo(objConnection);
+        result = imp.ImportarArchivoPlanillaExcel(objBnSentencias, objUsuario.getUsuario());
         // EN CASO DE NO HABER PROBLEMAS RETORNAMOS UNA NUEVA CONSULTA CON TODOS LOS DATOS.
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            out.print(result);
+        if (result == null) {
+            try (PrintWriter out = response.getWriter()) {
+                out.print("GUARDO");
+            }
+        } else {
+            //PROCEDEMOS A ELIMINAR TODO;
+            try (PrintWriter out = response.getWriter()) {
+                out.print(result);
+            }
         }
     }
 

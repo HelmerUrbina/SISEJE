@@ -12,16 +12,16 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <title>Sistema de Sentencias Judiciales - Ejercito Peruano</title>    
+        <title>Sistema de Sentencias Judiciales - Ejercito Peruano</title>
         <link rel="icon" href="favicon.ico" type="image/x-icon">
         <link href="css/util.css" rel="stylesheet" type="text/css"/>
         <link href="css/main_login.css" rel="stylesheet" type="text/css"/>
         <link href="css/fallback.css" rel="stylesheet" type="text/css"/>
-        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/> 
-        <link href="fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>        
-        <link href="plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>        
+        <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <link href="fonts/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"/>
+        <link href="plugins/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"/>
         <link href="css/style.css" rel="stylesheet">
-        <script src="javascript/jquery.js" type="text/javascript"></script>        
+        <script src="javascript/jquery.js" type="text/javascript"></script>
         <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
         <script src="vendor/bootstrap/js/popper.min.js" type="text/javascript"></script>
         <script src="vendor/bootstrap/js/bootstrap.min.js" type="text/javascript"></script> 
@@ -71,7 +71,7 @@
             }
         </script>
     </head>
-    <body>    
+    <body>
         <div class="limiter">
             <div class="container-login100">
                 <div class="svg">
@@ -91,7 +91,7 @@
                             <input class="input100" type="text" name="txt_Usuario" id="txt_Usuario" required="required">
                             <span class="focus-input100" data-placeholder="Usuario"></span>
                         </div>  
-                        <div class="wrap-input100 validate-input" data-validate="Ingrese Clave">                                
+                        <div class="wrap-input100 validate-input" data-validate="Ingrese Clave">
                             <input class="input100" type="password" name="txt_Password" id="txt_Password" minlength="3" required="required">
                             <span class="focus-input100" data-placeholder="Contraseña"></span>
                         </div>
@@ -111,8 +111,8 @@
                             <br>
                             <span class="txt1">
                                 2018 ® Derechos Reservados
-                            </span>                                
-                            <br>   
+                            </span>
+                            <br>
                         </div>
                     </form>
                 </div>
@@ -127,7 +127,7 @@
                     <div class="modal-header">
                         <h4 class="modal-title" id="defaultModalLabel">RECUPERAR PASSWORD</h4>
                     </div>
-                    <div class="modal-body">                        
+                    <div class="modal-body">
                         <div class="row clearfix">
                             <div class="col-sm-2 form-control-label">
                                 <label for="usuario">Usuario</label>

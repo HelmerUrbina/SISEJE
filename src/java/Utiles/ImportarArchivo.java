@@ -31,7 +31,7 @@ public class ImportarArchivo {
         objConnection = objConnection1;
     }
 
-    public String ImportarArchivoExcel (BeanSentencias objBnSentencias, String usuario) throws FileNotFoundException, IOException {
+    public String ImportarArchivoExcel(BeanSentencias objBnSentencias, String usuario) throws FileNotFoundException, IOException {
         SentenciasDAO objDsSentencias = new SentenciasDAOImpl(objConnection);
         FileInputStream excelStream = null;
         try {
@@ -54,6 +54,47 @@ public class ImportarArchivo {
                 objBnSentencias.setRemuneracion(hssfRow.getCell(6).getNumericCellValue());
                 objBnSentencias.setJuez(hssfRow.getCell(7).getStringCellValue());
                 k = objDsSentencias.iduResolucionesProcesoDescuentos(objBnSentencias, usuario);
+            }
+        } catch (FileNotFoundException fileNotFoundException) {
+            System.out.println("Error proceso 1" + fileNotFoundException.getMessage());
+            return "No se encontró el fichero: " + fileNotFoundException;
+        } catch (IOException ex) {
+            System.out.println("Error fichero 1" + ex.getMessage());
+            return "Error al procesar el fichero: " + ex.getMessage();
+        } finally {
+            try {
+                excelStream.close();
+            } catch (IOException ex) {
+                System.out.println("Error fichero 2" + ex.getMessage());
+                return "Error al procesar el fichero después de cerrarlo: " + ex.getMessage();
+            }
+        }
+        return null;
+    }
+
+    public String ImportarArchivoPlanillaExcel(BeanSentencias objBnSentencias, String usuario) throws FileNotFoundException, IOException {
+        SentenciasDAO objDsSentencias = new SentenciasDAOImpl(objConnection);
+        FileInputStream excelStream = null;
+        try {
+            String filePath = "C:/SISEJE/Resoluciones/Planilla/" + objBnSentencias.getPeriodo() + "-" + objBnSentencias.getMes() + "-" + objBnSentencias.getTipo() + "-" + objBnSentencias.getArchivo();
+            excelStream = new FileInputStream(filePath);
+            XSSFWorkbook myWorkBook = new XSSFWorkbook(excelStream);
+            XSSFSheet mySheet = myWorkBook.getSheetAt(0);
+            Iterator<Row> rowIterator = mySheet.iterator();
+            rowIterator.next();
+            String k;
+            while (rowIterator.hasNext()) {
+                Row hssfRow = rowIterator.next(); // For each row, iterate through each columns 
+                objBnSentencias.setMode("I");
+                objBnSentencias.setPeriodo(hssfRow.getCell(0).getStringCellValue());
+                objBnSentencias.setMes(hssfRow.getCell(1).getStringCellValue());
+                objBnSentencias.setTipo(hssfRow.getCell(2).getStringCellValue());
+                objBnSentencias.setCIP(hssfRow.getCell(3).getStringCellValue());
+                objBnSentencias.setSentencia((int) (hssfRow.getCell(4).getNumericCellValue()));
+                objBnSentencias.setResolucion((int) (hssfRow.getCell(5).getNumericCellValue()));
+                objBnSentencias.setTipoRemuneracion(hssfRow.getCell(6).getStringCellValue());
+                objBnSentencias.setCuotas((int) (hssfRow.getCell(7).getNumericCellValue()));
+                k = objDsSentencias.iduResolucionesPlanilla(objBnSentencias, usuario);
             }
         } catch (FileNotFoundException fileNotFoundException) {
             System.out.println("Error proceso 1" + fileNotFoundException.getMessage());

@@ -116,7 +116,7 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
                 fileToDownload.delete();
             }
         }
-        
+
         //SE ENVIA DE ACUERDO AL MODO SELECCIONADO
         switch (request.getParameter("mode")) {
             case "validacion":
@@ -147,23 +147,22 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
             sb.append("</tr>");
             sb.append("</thead>");
             sb.append("<tbody>");
-            for (int k = 1; k < lista.size(); k++) {
-                BeanSentencias sentencia = (BeanSentencias) lista.get(k);
-                sb.append("<tr>");
-                sb.append("<td style=\"text-align: center\">").append(sentencia.getCuotas()).append("</td>");
-                sb.append("<td style=\"text-align: center\">").append(sentencia.getTipoRemuneracion()).append("</td>");
-                sb.append("<td style=\"text-align: center\">");
-                switch (sentencia.getCuotas()) {
-                    case 2:
-                        sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Exportar Datos a Excel\" onclick=\"javascript: fn_ExportarExcel();\">");
-                        sb.append("<i class=\"material-icons\">cloud_download</i>").append("</button> ");
-                        break;
-                    default:
-                        break;
-                }
-                sb.append("</td>");
-                sb.append("</tr>");
-            }
+            sb.append("<tr>");
+            sb.append("<td style=\"text-align: center\">").append("1").append("</td>");
+            sb.append("<td style=\"text-align: center\">").append("DESCARGA SENTENCIAS PROCESADAS").append("</td>");
+            sb.append("<td style=\"text-align: center\">");
+            sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Exportar Datos a Excel\" onclick=\"javascript: fn_ExportarExcel();\">");
+            sb.append("<i class=\"material-icons\">cloud_download</i>").append("</button>");
+            sb.append("</td>");
+            sb.append("</tr>");
+            sb.append("<tr>");
+            sb.append("<td style=\"text-align: center\">").append("2").append("</td>");
+            sb.append("<td style=\"text-align: center\">").append("SUBIR PLANILLAS MCPP").append("</td>");
+            sb.append("<td style=\"text-align: center\">");
+            sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Importat Datos de Excel\" onclick=\"javascript: fn_ImportarExcel();\">");
+            sb.append("<i class=\"material-icons\">cloud_upload</i>").append("</button>");
+            sb.append("</td>");
+            sb.append("</tr>");
             sb.append("</tbody>");
             sb.append("</table>");
         }

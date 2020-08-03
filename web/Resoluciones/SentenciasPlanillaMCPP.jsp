@@ -235,11 +235,7 @@
                     }
                 });
                 
-
-                
             }
-
-
         </script>
     </head>
     <body class="theme-teal">
