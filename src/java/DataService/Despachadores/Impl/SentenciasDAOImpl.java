@@ -315,8 +315,10 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     @Override
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
-        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
-                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION "
+        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, SENTENCIA, RESOLUCION, PLANILLA_MCPP, "
+                + "NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, "
+                + "IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION "
                 + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
@@ -332,6 +334,10 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias = new BeanSentencias();
                 objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
                 objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
+                objBnSentencias.setArma(objResultSet.getString("CSENTENCIA_TIPO"));
+                objBnSentencias.setSentencia(objResultSet.getInt("SENTENCIA"));
+                objBnSentencias.setResolucion(objResultSet.getInt("RESOLUCION"));
+                objBnSentencias.setCuotas(objResultSet.getInt("PLANILLA_MCPP"));
                 objBnSentencias.setUnidad(objResultSet.getString("NUMERO"));
                 objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
                 objBnSentencias.setPersonal(objResultSet.getString("NOMBRE"));
@@ -341,9 +347,10 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setTipo(objResultSet.getString("TIPO"));
                 objBnSentencias.setExpediente(objResultSet.getString("DNI_DEMAN"));
                 objBnSentencias.setNumeroResolucion(objResultSet.getString("CTANUMERO"));
-                objBnSentencias.setArma(objResultSet.getString("BENEFICIARIO"));
+                objBnSentencias.setBeneficiario(objResultSet.getString("BENEFICIARIO"));
                 objBnSentencias.setTipoPago(objResultSet.getString("TIPO_PAGO"));
-                objBnSentencias.setOficio(objResultSet.getString("BANCO"));
+                objBnSentencias.setOficio(objResultSet.getString("COD_BANCO"));
+                objBnSentencias.setBanco(objResultSet.getString("BANCO"));
                 objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
                 objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
                 objBnSentencias.setMesaPartes(objResultSet.getString("COD_DISTRIBUCION"));

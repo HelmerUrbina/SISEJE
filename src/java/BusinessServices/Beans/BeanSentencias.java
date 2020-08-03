@@ -26,6 +26,8 @@ public class BeanSentencias implements Serializable {
     private String TipoMoneda;
     private String Mes;
     private String Archivo;
+    private String Banco;
+    private String Beneficiario;
     private Date Fecha;
     private Date FechaIngreso;
     private Date FechaFin;
@@ -204,6 +206,22 @@ public class BeanSentencias implements Serializable {
 
     public void setArchivo(String Archivo) {
         this.Archivo = Archivo;
+    }
+
+    public String getBanco() {
+        return Banco;
+    }
+
+    public void setBanco(String Banco) {
+        this.Banco = Banco;
+    }
+
+    public String getBeneficiario() {
+        return Beneficiario;
+    }
+
+    public void setBeneficiario(String Beneficiario) {
+        this.Beneficiario = Beneficiario;
     }
 
     public Date getFecha() {
