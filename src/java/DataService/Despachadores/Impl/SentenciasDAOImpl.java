@@ -270,7 +270,22 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     @Override
     public List getListaResolucionesProceso(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
-        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CTIPO_REMUNERACION_CODIGO, "
+        sql = "SELECT MOV.CPERIODO_CODIGO, MOV.CMES_CODIGO, "
+                + "CASE MOV.CSENTENCIA_TIPO WHEN '02' THEN '8089' WHEN '03' THEN LPAD(MAX(RESOL.NJUZGADO_CODIGO),4,'0') ELSE '0000' END AS CRESOLUCION_PROCESO_DESCUENTO, "
+                + "MOV.CTIPO_REMUNERACION_CODIGO, MOV.CPERSONAL_CIP, "
+                + "SUM(CASE WHEN MOV.NTIPO_PAGO_CODIGO IN (1,2,5) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS PORCENTAJE, "
+                + "SUM(CASE WHEN MOV.NTIPO_PAGO_CODIGO IN (3,4) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS MONTO, "
+                + "MOV.NSENTENCIA_CODIGO||'-'||MOV.NRESOLUCION_CODIGO AS IDENTIFICADOR "
+                + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO MOV INNER JOIN SISEJE_RESOLUCIONES RESOL ON (RESOL.CPERSONAL_CIP=MOV.CPERSONAL_CIP AND "
+                + "RESOL.NSENTENCIA_CODIGO=MOV.NSENTENCIA_CODIGO AND RESOL.NRESOLUCION_CODIGO=MOV.NRESOLUCION_CODIGO) WHERE  "
+                + "MOV.CPERIODO_CODIGO=? AND "
+                + "MOV.CMES_CODIGO=? AND "
+                + "MOV.CSENTENCIA_TIPO=?  AND "
+                + "NRESOLUCION_MOVIMIENTO_MONTO>0 "
+                + "GROUP BY MOV.CPERIODO_CODIGO, MOV.CMES_CODIGO, MOV.CSENTENCIA_TIPO, "
+                + "MOV.CPERSONAL_CIP,MOV.NSENTENCIA_CODIGO,MOV.NRESOLUCION_CODIGO, MOV.CTIPO_REMUNERACION_CODIGO "
+                + "ORDER BY MOV.CPERSONAL_CIP,MOV.NSENTENCIA_CODIGO,MOV.NRESOLUCION_CODIGO, MOV.CTIPO_REMUNERACION_CODIGO";
+        /*sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CTIPO_REMUNERACION_CODIGO, "
                 + "CRESOLUCION_PROCESO_DESCUENTO, "
                 + "CPERSONAL_CIP, SUM(NRESOLUCION_PROCESO_PORCENTAJE) AS PORCENTAJE, "
                 + "SUM(NRESOLUCION_PROCESO_MONTO) AS MONTO "
@@ -281,6 +296,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 + "GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CRESOLUCION_PROCESO_DESCUENTO, "
                 + "CPERSONAL_CIP, CTIPO_REMUNERACION_CODIGO "
                 + "ORDER BY CRESOLUCION_PROCESO_DESCUENTO, CPERSONAL_CIP, CTIPO_REMUNERACION_CODIGO";
+         */
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
             objPreparedStatement.setString(1, objBeanSentencias.getPeriodo());
@@ -291,11 +307,12 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias = new BeanSentencias();
                 objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
                 objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
-                objBnSentencias.setTipoRemuneracion(objResultSet.getString("CTIPO_REMUNERACION_CODIGO"));
                 objBnSentencias.setExpediente(objResultSet.getString("CRESOLUCION_PROCESO_DESCUENTO"));
+                objBnSentencias.setTipoRemuneracion(objResultSet.getString("CTIPO_REMUNERACION_CODIGO"));
                 objBnSentencias.setCIP(objResultSet.getString("CPERSONAL_CIP"));
                 objBnSentencias.setPorcentaje(objResultSet.getDouble("PORCENTAJE"));
                 objBnSentencias.setMonto(objResultSet.getDouble("MONTO"));
+                objBnSentencias.setDNI(objResultSet.getString("IDENTIFICADOR"));
                 lista.add(objBnSentencias);
             }
         } catch (SQLException e) {

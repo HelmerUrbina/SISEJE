@@ -17,8 +17,10 @@ public class ExportarExcel {
     public void GenerarArchivoDescuentos(String nombreArchivo, List objConsulta) {
         File archivo = new File(nombreArchivo);
         Workbook workbook = new XSSFWorkbook();
+        String cip = "";
+        Integer incremento = 1;
         Sheet pagina = workbook.createSheet("Descuentos");
-        String[] titulos = {"Periodo", "Mes", "TipoPlanilla", "CodDescuento", "CIP", "Porcentaje", "Fijo"};
+        String[] titulos = {"PeriodoMes", "CodDescuento", "TipoPlanilla", "CIP", "Porcentaje", "Fijo", "Identificador", "Prioridad"};
         Row fila = pagina.createRow(0);
         for (int i = 0; i < titulos.length; i++) {
             Cell celda = fila.createCell(i);
@@ -27,13 +29,20 @@ public class ExportarExcel {
         for (int i = 0; i < objConsulta.size(); i++) {
             BeanSentencias proceso = (BeanSentencias) objConsulta.get(i);
             fila = pagina.createRow(1 + i);
-            fila.createCell(0).setCellValue(proceso.getPeriodo());
-            fila.createCell(1).setCellValue(proceso.getMes());
+            fila.createCell(0).setCellValue(proceso.getPeriodo() + "" + proceso.getMes());
+            fila.createCell(1).setCellValue(proceso.getExpediente());
             fila.createCell(2).setCellValue(proceso.getTipoRemuneracion());
-            fila.createCell(3).setCellValue(proceso.getExpediente());
-            fila.createCell(4).setCellValue(proceso.getCIP());
-            fila.createCell(5).setCellValue(proceso.getPorcentaje());
-            fila.createCell(6).setCellValue(proceso.getMonto());
+            fila.createCell(3).setCellValue(proceso.getCIP());
+            fila.createCell(4).setCellValue(proceso.getPorcentaje());
+            fila.createCell(5).setCellValue(proceso.getMonto());
+            fila.createCell(6).setCellValue(proceso.getDNI());
+            if (proceso.getCIP().equals(cip)) {
+                incremento++;
+            } else {
+                incremento = 1;
+            }
+            cip = proceso.getCIP();
+            fila.createCell(7).setCellValue(incremento);
         }
         for (int colNum = 0; colNum < fila.getLastCellNum(); colNum++) {
             workbook.getSheetAt(0).autoSizeColumn(colNum);
