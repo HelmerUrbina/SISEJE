@@ -332,6 +332,20 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     @Override
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
+        /*sql="SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO,   PLANILLA_MCPP, \n" +
+"                COD_ADM, NOMBRE, DNI_DEMANDADO, DESC_CORTA, \n" +
+"                TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, \n" +
+"                SUM(IMPORTE) IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION \n" +
+"                FROM V_RESOLUCION_MOVIMIENTO WHERE \n" +
+"                CPERIODO_CODIGO='2020' AND \n" +
+"                CMES_CODIGO='08' AND \n" +
+"                CSENTENCIA_TIPO='03' \n" +
+"                GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO,   PLANILLA_MCPP, \n" +
+"                COD_ADM, NOMBRE, DNI_DEMANDADO, DESC_CORTA, \n" +
+"                TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, \n" +
+"                MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION\n" +
+"                ORDER BY COD_ADM, DNI_DEMAN";
+        */
         sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, SENTENCIA, RESOLUCION, PLANILLA_MCPP, "
                 + "NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
                 + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, "

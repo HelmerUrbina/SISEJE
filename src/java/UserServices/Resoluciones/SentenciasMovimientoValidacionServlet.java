@@ -116,7 +116,6 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
                 fileToDownload.delete();
             }
         }
-
         //SE ENVIA DE ACUERDO AL MODO SELECCIONADO
         switch (request.getParameter("mode")) {
             case "validacion":

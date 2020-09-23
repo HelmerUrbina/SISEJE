@@ -2,12 +2,10 @@ package UserServices.Login;
 
 import BusinessServices.Beans.BeanReporte;
 import BusinessServices.Beans.BeanUsuario;
-import Utiles.Utiles;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -79,9 +77,7 @@ public class ReportesServlet extends HttpServlet {
                 break;
             case "MPAR0002":
                 nombre = "MesaPartes/MPAR0002.jasper";
-                
-                
-                
+
                 break;
             //REPORTES DEL MODULO DE SENTENCIAS
             case "RESO0001":
@@ -95,6 +91,24 @@ public class ReportesServlet extends HttpServlet {
                 break;
             case "RESO0003":
                 nombre = "Resoluciones/RESO0003.jasper";
+                if (reporte.getCodigo().equals("00")) {
+                    reporte.setCodigo("%");
+                }
+                break;
+            case "RESO0004":
+                nombre = "Resoluciones/RESO0004.jasper";
+                if (reporte.getCodigo().equals("00")) {
+                    reporte.setCodigo("%");
+                }
+                break;
+            case "RESO0005":
+                nombre = "Resoluciones/RESO0005.jasper";
+                if (reporte.getCodigo().equals("00")) {
+                    reporte.setCodigo("%");
+                }
+                break;
+            case "RESO0006":
+                nombre = "Resoluciones/RESO0006.jasper";
                 if (reporte.getCodigo().equals("00")) {
                     reporte.setCodigo("%");
                 }

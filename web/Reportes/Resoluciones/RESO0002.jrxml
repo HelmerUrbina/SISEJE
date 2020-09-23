@@ -7,34 +7,30 @@
 		<defaultValueExpression><![CDATA["2020"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="MES" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["03"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["09"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="CODIGO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["01"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USUARIO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["AdminSISEJE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TIPO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["02"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["03"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT CPERIODO_CODIGO AS PERIODO, UTIL.FUN_NOMBRE_MES(CMES_CODIGO) AS MES,
 UTIL.FUN_AREA('04', CSENTENCIA_TIPO) AS TIPO,
-UTIL.FUN_NOMBRE_REMUNERACION(UTIL.FUN_TIPO_PERSONAL(CPERSONAL_CIP), CTIPO_REMUNERACION_CODIGO) AS TIPO_REMUNERACION,
-CPERSONAL_CIP AS CIP, UTIL.FUN_NOMBRE_PERSONAL(CPERSONAL_CIP) AS DEMANDADO, 
-CASE WHEN CRESOLUCION_BENEFICIARIO_TIPO='2' THEN UTIL. FUN_JUZGADO_RESOLUCION(CPERSONAL_CIP, NSENTENCIA_CODIGO, NRESOLUCION_CODIGO) ELSE UTIL.FUN_NOMBRE_BENEFICIARIO(VRESOLUCION_MOVIMIENTO_DOCUMEN) END AS BENEFICIARIO,
-CASE CRESOLUCION_BENEFICIARIO_TIPO WHEN '1' THEN 'CUENTA' WHEN '2' THEN 'JUZGADO' WHEN '3' THEN 'TELEGIRO' ELSE 'SIN ESPECIFICAR' END AS TIPO_PAGO,
-CASE WHEN CRESOLUCION_BENEFICIARIO_TIPO!='1' THEN UTIL.FUN_BANCO(1) ELSE UTIL.FUN_BANCO(NBANCO_CODIGO) END AS BANCO,
-NRESOLUCION_MOVIMIENTO_PAGO AS IMPORTE,
+DISTRIBUCION AS TIPO_REMUNERACION,
+CPERSONAL_CIP AS CIP, NOMBRE AS DEMANDADO,  BENEFICIARIO,
+TIPO_PAGO, BANCO, IMPORTE,
 UTIL.FUN_NOMBRE_USUARIO($P{USUARIO}) AS USUARIO
-FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE 
+FROM V_RESOLUCION_MOVIMIENTO WHERE 
 CPERIODO_CODIGO=$P{PERIODO} AND 
 CMES_CODIGO=$P{MES} AND 
 CSENTENCIA_TIPO=$P{TIPO} AND
-CTIPO_REMUNERACION_CODIGO LIKE $P{CODIGO} AND
-NRESOLUCION_MOVIMIENTO_PAGO>0
-ORDER BY TIPO_REMUNERACION, BANCO, CRESOLUCION_BENEFICIARIO_TIPO, CPERSONAL_CIP]]>
+COD_DISTRIBUCION LIKE $P{CODIGO} 
+ORDER BY TIPO_PAGO, COD_DISTRIBUCION, BANCO, CPERSONAL_CIP]]>
 	</queryString>
 	<field name="PERIODO" class="java.lang.String"/>
 	<field name="MES" class="java.lang.String"/>
@@ -273,7 +269,7 @@ ORDER BY TIPO_REMUNERACION, BANCO, CRESOLUCION_BENEFICIARIO_TIPO, CPERSONAL_CIP]
 				</textElement>
 				<textFieldExpression><![CDATA[$F{CIP}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="75" y="0" width="145" height="10" uuid="013a0415-9caf-455c-9403-00373cb3cf75"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -287,7 +283,7 @@ ORDER BY TIPO_REMUNERACION, BANCO, CRESOLUCION_BENEFICIARIO_TIPO, CPERSONAL_CIP]
 				</textElement>
 				<textFieldExpression><![CDATA[$F{DEMANDADO}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField isBlankWhenNull="true">
 				<reportElement x="220" y="0" width="200" height="10" uuid="8296baf9-7596-43fb-be38-066ed2319b4e"/>
 				<box>
 					<pen lineWidth="0.5"/>

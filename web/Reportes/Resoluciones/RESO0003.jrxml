@@ -2,12 +2,12 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RESO0003" pageWidth="595" pageHeight="842" columnWidth="523" leftMargin="36" rightMargin="36" topMargin="20" bottomMargin="20" uuid="3a88e084-b8ec-4bcd-a0e1-bf2b9863859c">
 	<property name="ireport.zoom" value="1.4641000000000022"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="116"/>
+	<property name="ireport.y" value="51"/>
 	<parameter name="PERIODO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["2020"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="MES" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["03"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["09"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="CODIGO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
@@ -16,29 +16,25 @@
 		<defaultValueExpression><![CDATA["AdminSISEJE"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="TIPO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["02"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["03"]]></defaultValueExpression>
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT CPERIODO_CODIGO AS PERIODO, UTIL.FUN_NOMBRE_MES(CMES_CODIGO) AS MES,
-UTIL.FUN_AREA('04', CSENTENCIA_TIPO) AS TIPO,
-UTIL.FUN_NOMBRE_REMUNERACION(1, CTIPO_REMUNERACION_CODIGO) AS TIPO_REMUNERACION,
-CASE CRESOLUCION_BENEFICIARIO_TIPO WHEN '1' THEN 'CUENTA' WHEN '2' THEN 'JUZGADO' WHEN '3' THEN 'TELEGIRO' ELSE 'SIN ESPECIFICAR' END AS TIPO_PAGO,
-CASE WHEN CRESOLUCION_BENEFICIARIO_TIPO!='1' THEN UTIL.FUN_BANCO(1) ELSE UTIL.FUN_BANCO(NBANCO_CODIGO) END AS BANCO,
-SUM(NRESOLUCION_MOVIMIENTO_PAGO) AS IMPORTE,
+TIPO, COD_DISTRIBUCION, DISTRIBUCION AS TIPO_REMUNERACION, TIPO_PAGO, BANCO, SUM(IMPORTE) AS IMPORTE,
 UTIL.FUN_NOMBRE_USUARIO($P{USUARIO}) AS USUARIO
-FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE 
+FROM V_RESOLUCION_MOVIMIENTO WHERE 
 CPERIODO_CODIGO=$P{PERIODO} AND 
 CMES_CODIGO=$P{MES} AND 
 CSENTENCIA_TIPO=$P{TIPO} AND
-CTIPO_REMUNERACION_CODIGO LIKE $P{CODIGO} AND
-NRESOLUCION_MOVIMIENTO_PAGO>0
-GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, CTIPO_REMUNERACION_CODIGO, CRESOLUCION_BENEFICIARIO_TIPO, NBANCO_CODIGO
-HAVING SUM(NRESOLUCION_MOVIMIENTO_PAGO)>0
-ORDER BY TIPO_REMUNERACION, BANCO, CRESOLUCION_BENEFICIARIO_TIPO]]>
+COD_DISTRIBUCION LIKE $P{CODIGO} 
+GROUP BY CPERIODO_CODIGO, CMES_CODIGO, TIPO, COD_DISTRIBUCION, DISTRIBUCION, TIPO_PAGO, BANCO
+HAVING SUM(IMPORTE)>0
+ORDER BY COD_DISTRIBUCION, TIPO_PAGO, BANCO]]>
 	</queryString>
 	<field name="PERIODO" class="java.lang.String"/>
 	<field name="MES" class="java.lang.String"/>
 	<field name="TIPO" class="java.lang.String"/>
+	<field name="COD_DISTRIBUCION" class="java.lang.String"/>
 	<field name="TIPO_REMUNERACION" class="java.lang.String"/>
 	<field name="TIPO_PAGO" class="java.lang.String"/>
 	<field name="BANCO" class="java.lang.String"/>

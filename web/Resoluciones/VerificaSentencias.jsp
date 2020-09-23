@@ -165,7 +165,7 @@
                         data: {mode: 'G', cip: cip},
                         success: function (data) {
                             $('#DetalleSentencia').empty();
-                            $('#DetalleSentencia').html(data);                           
+                            $('#DetalleSentencia').html(data);
                             $('#TablaSentencias').DataTable({
                                 "order": [[6, "asc"], [1, "asc"], [0, "asc"]]
                             });

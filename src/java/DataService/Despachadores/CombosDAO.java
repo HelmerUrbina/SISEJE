@@ -39,7 +39,7 @@ public interface CombosDAO {
     public List getAreaResolucion();
 
     public List getTipoMonedas();
-    
+
     public List getConceptosSentencia(String periodo, String mes, String tipo);
 
     public String getBeneficiario(String codigo);

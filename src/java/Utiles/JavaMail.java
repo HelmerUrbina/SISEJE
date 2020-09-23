@@ -13,9 +13,9 @@ import javax.mail.internet.MimeMessage;
 
 public class JavaMail {
 
-    static final String FROMNAME = "Helmer Urbina";
-    static final String SMTP_USERNAME = "helmerurbina@gmail.com";
-    static final String SMTP_PASSWORD = "17101985";
+    static final String FROMNAME = "Administrador";
+    static final String SMTP_USERNAME = "correo@gmail.com";
+    static final String SMTP_PASSWORD = "";
     static final String CONFIGSET = "ConfigSet";
     static final String HOST = "smtp.gmail.com";
     static final int PORT = 587;

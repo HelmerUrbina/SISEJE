@@ -1,11 +1,9 @@
 package UserServices.Reportes;
 
-import BusinessServices.Beans.BeanMesaPartes;
 import BusinessServices.Beans.BeanReporte;
 import BusinessServices.Beans.BeanUsuario;
 import DataService.Despachadores.CombosDAO;
 import DataService.Despachadores.Impl.CombosDAOImpl;
-import DataService.Despachadores.MesaPartesDAO;
 import java.io.IOException;
 import java.sql.Connection;
 import javax.servlet.RequestDispatcher;

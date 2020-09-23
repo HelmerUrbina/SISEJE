@@ -63,6 +63,7 @@
         <script src="javascript/pages/forms/form-validation.js"></script>
         <script src="javascript/pages/tables/jquery-datatable.js"></script>
         <script src="javascript/pages/ui/dialogs.js"></script>
+        <script src="javascript/script.js" type="text/javascript"></script>
         <!-- Demo Js -->
         <script src="javascript/demo.js"></script>
         <script type="text/javascript">
@@ -80,10 +81,27 @@
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
-                var codigo = $('#cbo_TipoRemuneracion').val();
+                var codigo = $('#cbo_Conceptos').val();
+                var codigo2= $('#cbo_TipoPersonal').val();
                 var reporte = $('input:radio[name=reporte]:checked').val();
-                var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + codigo;
+                var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + codigo+ '&codigo2='+ codigo2;
                 window.open(url, '_blank');
+            }
+            function fn_cargarConceptos() {
+                var periodo = $('#cbo_Periodo').val();
+                var mes = $('#cbo_Mes').val();
+                var tipo = $('#cbo_Tipo').val();
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'CONCEPTO_PLANILLA', periodo: periodo, mes: mes, tipo: tipo},
+                    success: function (data) {
+                        $('#cbo_Conceptos').empty();
+                        $('#cbo_Conceptos').append('<option value="00">TODOS</option>');
+                        $('#cbo_Conceptos').append(data);
+                        $('#cbo_Conceptos').selectpicker('refresh');
+                    }
+                });
             }
         </script>
     </head>
@@ -105,7 +123,7 @@
                                         <label for="Periodo">Periodo</label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <select id="cbo_Periodo" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                        <select id="cbo_Periodo" class="form-control" onchange="javascript: fn_cargarConceptos();">
                                             <option value="0">Seleccione</option>
                                             <c:forEach var="a" items="${objPeriodos}">
                                                 <option value="${a.codigo}">${a.descripcion}</option>
@@ -116,7 +134,7 @@
                                         <label for="numero">Mes</label>
                                     </div>
                                     <div class="col-sm-2">
-                                        <select id="cbo_Mes" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                        <select id="cbo_Mes" class="form-control" onchange="javascript: fn_cargarConceptos();">
                                             <option value="01">Enero</option>
                                             <option value="02">Febrero</option>
                                             <option value="03">Marzo</option>
@@ -135,7 +153,7 @@
                                         <label for="Tipo">Tipo</label>
                                     </div>
                                     <div class="col-sm-3">
-                                        <select id="cbo_Tipo" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                        <select id="cbo_Tipo" class="form-control" onchange="javascript: fn_cargarConceptos();">
                                             <option value="0">Seleccione</option>
                                             <c:forEach var="b" items="${objTipo}">
                                                 <option value="${b.codigo}">${b.descripcion}</option>
@@ -145,14 +163,21 @@
                                 </div>
                                 <div class="row clearfix">
                                     <div class="col-sm-1 form-control-label">
-                                        <label for="Periodo">Periodo</label>
+                                        <label for="Periodo">Concepto</label>
                                     </div>
                                     <div class="col-sm-3">
-                                        <select id="cbo_TipoRemuneracion" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                        <select id="cbo_Conceptos" class="form-control">
                                             <option value="00">TODOS</option>
-                                            <c:forEach var="c" items="${objTipoRemuneracion}">
-                                                <option value="${c.codigo}">${c.descripcion}</option>
-                                            </c:forEach>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1 form-control-label">
+                                        <label for="Periodo">Personal</label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select id="cbo_TipoPersonal" class="form-control">
+                                            <option value="0">Seleccione</option>
+                                            <option value="1">Actividad</option>
+                                            <option value="2">Pensionista</option>
                                         </select>
                                     </div>
                                 </div>
@@ -160,7 +185,7 @@
                             <div class="body"> 
                                 <!-- Tab panes -->
                                 <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane fade in active" id="ListarPrioridad">
+                                    <div role="tabpanel" class="tab-pane fade in active" id="ListarReportes">
                                         <!-- Striped Rows -->
                                         <div class="row clearfix">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -187,6 +212,18 @@
                                                                     <button type="button" class="list-group-item">
                                                                         <input name="reporte" type="radio" id="RESO0003" class="with-gap" value="RESO0003"/>
                                                                         <label for="RESO0003">Asignaciones Judiciales (Resumen)</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0004" class="with-gap" value="RESO0004"/>
+                                                                        <label for="RESO0004">Relación de Beneficiarios</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0005" class="with-gap" value="RESO0005"/>
+                                                                        <label for="RESO0005">Relación por Conceptos</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0006" class="with-gap" value="RESO0006"/>
+                                                                        <label for="RESO0006">Relación por Banco</label>
                                                                     </button>
                                                                 </div>
                                                             </div>
