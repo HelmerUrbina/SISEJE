@@ -336,6 +336,7 @@
                     $('#txt_FechaExpediente').val('');
                     $('#txt_Juez').val('');
                     $('#cbo_Juzgados').selectpicker('val', 0);
+                    $('#cbo_Departamento').selectpicker('val', 0);
                     $('#RegistrarResolucion .modal-content').removeAttr('class').addClass('modal-content modal-col-default');
                     $('#RegistrarResolucion').modal('show');
                 } else {
@@ -352,7 +353,7 @@
                     data: {mode: 'R', cip: cip, sentencia: sentencia, resolucion: resolucion},
                     success: function (data) {
                         var dato = data.trim().split("+++");
-                        if (dato.length === 10) {
+                        if (dato.length === 13) {
                             $('#cbo_Periodo').selectpicker('val', dato[0]);
                             //cargarDecretosMesaPartes();
                             $('#txt_NumeroOficio').val(dato[6]);
@@ -362,9 +363,13 @@
                             $('#txt_FechaExpediente').val(dato[5]);
                             $('#txt_Juez').val(dato[8]);
                             $('#cbo_Juzgados').selectpicker('val', dato[9]);
+                            $('#cbo_Departamento').selectpicker('val', dato[10]);
                             $('#cbo_MesaPartes').append("<option value=" + dato[1] + ">" + dato[2] + "</option>");
                             $('#cbo_MesaPartes').selectpicker('val', dato[1]);
                             $('#cbo_MesaPartes').selectpicker('refresh');
+                            $('#cbo_Lugar').append("<option value=" + dato[11] + ">" + dato[12] + "</option>");
+                            $('#cbo_Lugar').selectpicker('val', dato[11]);
+                            $('#cbo_Lugar').selectpicker('refresh');
                             $('#RegistrarResolucion .modal-content').removeAttr('class').addClass('modal-content modal-col-default');
                             $('#RegistrarResolucion').modal('show');
                         }
@@ -406,13 +411,15 @@
                 var juez = $('#txt_Juez').val();
                 var tipoJuzgado = 0;
                 var juzgado = $('#cbo_Juzgados').val();
+                var departamento = $('#cbo_Departamento').val();
+                var lugar = $('#cbo_Lugar').val();
                 $.ajax({
                     type: "POST",
                     url: "IduResoluciones",
                     data: {mode: mode, cip: cip, sentencia: sentencia, resolucion: resolucion,
                         periodo: periodo, mesaPartes: mesaPartes, oficio: oficio, fechaOficio: fechaOficio,
                         expediente: expediente, numeroResolucion: numeroResolucion, fechaExpediente: fechaExpediente,
-                        juez: juez, tipoJuzgado: tipoJuzgado, juzgado: juzgado},
+                        juez: juez, tipoJuzgado: tipoJuzgado, juzgado: juzgado, departamento: departamento, lugar: lugar},
                     success: function (data) {
                         msg = data;
                         if (msg === "GUARDO") {
@@ -708,32 +715,30 @@
             }
             function verPersonal() {
                 var numeroDocumento = $('#txt_NumeroDocumento').val();
-                if (numeroDocumento.length === 8) {
-                    $.ajax({
-                        type: "GET",
-                        url: "Combos",
-                        data: {accion: 'BENEFICIARIO', codigo: numeroDocumento},
-                        success: function (data) {
-                            var dato = data.trim().split("+++");
-                            if (dato.length === 6) {
-                                $('#txt_Paterno').val(dato[0]);
-                                $('#txt_Materno').val(dato[1]);
-                                $('#txt_Nombres').val(dato[2]);
-                                $('#txt_FechaNacimiento').val(dato[3]);
-                                $('#txt_RazonSocial').val(dato[4]);
-                                $('#txt_RUC').val(dato[5]);
-                            } else {
-                                $('#txt_Paterno').val('');
-                                $('#txt_Materno').val('');
-                                $('#txt_Nombres').val('');
-                                $('#txt_RazonSocial').val('');
-                                $('#txt_RUC').val('');
-                                $('#txt_FechaNacimiento').val('');
-                                $('#txt_Paterno').focus();
-                            }
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'BENEFICIARIO', codigo: numeroDocumento},
+                    success: function (data) {
+                        var dato = data.trim().split("+++");
+                        if (dato.length === 6) {
+                            $('#txt_Paterno').val(dato[0]);
+                            $('#txt_Materno').val(dato[1]);
+                            $('#txt_Nombres').val(dato[2]);
+                            $('#txt_FechaNacimiento').val(dato[3]);
+                            $('#txt_RazonSocial').val(dato[4]);
+                            $('#txt_RUC').val(dato[5]);
+                        } else {
+                            $('#txt_Paterno').val('');
+                            $('#txt_Materno').val('');
+                            $('#txt_Nombres').val('');
+                            $('#txt_RazonSocial').val('');
+                            $('#txt_RUC').val('');
+                            $('#txt_FechaNacimiento').val('');
+                            $('#txt_Paterno').focus();
                         }
-                    });
-                }
+                    }
+                });
             }
             function verPersonalCuenta() {
                 var dni = $('#txt_NumeroDocumento').val();
@@ -778,13 +783,13 @@
                 $('#txt_FechaNacimiento').val('');
                 $('#txt_RazonSocial').val('');
                 $('#txt_RUC').val('');
+                $('#txt_RUC').attr('disabled','disabled');
                 if (tipoDocumento === '0') {
-                    $('#txt_Paterno').removeAttr('disabled');
-                    $('#txt_Materno').removeAttr('disabled');
-                    $('#txt_Nombres').removeAttr('disabled');
-                    $('#txt_FechaNacimiento').removeAttr('disabled');
-                    $('#txt_RazonSocial').removeAttr('disabled');
-                    $('#txt_RUC').removeAttr('disabled');
+                    $('#txt_Paterno').attr('disabled','disabled');
+                    $('#txt_Materno').attr('disabled','disabled');
+                    $('#txt_Nombres').attr('disabled','disabled');
+                    $('#txt_FechaNacimiento').attr('disabled','disabled');
+                    $('#txt_RazonSocial').attr('disabled','disabled');
                 }
                 //PARA DNI Y CARNET EXTRANJERIA
                 if (tipoDocumento === '1' || tipoDocumento === '2') {
@@ -792,8 +797,16 @@
                     $('#txt_Materno').removeAttr('disabled');
                     $('#txt_Nombres').removeAttr('disabled');
                     $('#txt_FechaNacimiento').removeAttr('disabled');
+                    $('#txt_RazonSocial').attr('disabled','disabled');
+                    $('#txt_RUC').attr('disabled','disabled');
+                }
+                //PARA RUC
+                if (tipoDocumento === '3') {
+                    $('#txt_Paterno').attr('disabled','disabled');
+                    $('#txt_Materno').attr('disabled','disabled');
+                    $('#txt_Nombres').attr('disabled','disabled');
+                    $('#txt_FechaNacimiento').attr('disabled','disabled');
                     $('#txt_RazonSocial').removeAttr('disabled');
-                    $('#txt_RUC').removeAttr('disabled');
                 }
                 $('#txt_NumeroDocumento').focus();
             }
@@ -849,6 +862,19 @@
                             $('#' + elemento.id).removeAttr('disabled');
                             $('#div_checkbox_' + elemento.id.substr(10, 2)).attr('checked', true);
                         }
+                    }
+                });
+            }
+            function cargarLugar() {
+                var departamento = $("#cbo_Departamento").val();
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'LUGAR', departamento: departamento},
+                    success: function (data) {
+                        $('#cbo_Lugar').empty();
+                        $('#cbo_Lugar').append(data);
+                        $('#cbo_Lugar').selectpicker('refresh');
                     }
                 });
             }
@@ -1237,6 +1263,27 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row clearfix">
+                                                        <div class="col-sm-2 form-control-label">
+                                                            <label for="Departamento">Departamento </label>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <select id="cbo_Departamento" class="form-control" onchange="javascript: cargarLugar();">
+                                                                <option value="0">Seleccione</option>
+                                                                <c:forEach var="g" items="${objDepartamentos}">
+                                                                    <option value="${g.codigo}">${g.descripcion}</option>
+                                                                </c:forEach>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-sm-1 form-control-label">
+                                                            <label for="Agencia">Agencia </label>
+                                                        </div>
+                                                        <div class="col-sm-4">
+                                                            <select id="cbo_Lugar" class="form-control">
+                                                                <option value="0">Seleccione</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer ">
                                                     <button type="button" class="btn bg-blue waves-effect btn-sm col-md-20" onclick="javascript:GuardarDatosResolucion();">
@@ -1273,6 +1320,7 @@
                                                                 <option value="0">Seleccione</option>
                                                                 <option value="1">D.N.I.</option>
                                                                 <option value="2">Carnet Extranjeria</option>
+                                                                <option value="3">RUC</option>
                                                             </select>
                                                         </div>
                                                         <div class="col-sm-2 form-control-label">

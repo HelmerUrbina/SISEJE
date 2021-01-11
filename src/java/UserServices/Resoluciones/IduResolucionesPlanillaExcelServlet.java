@@ -7,6 +7,8 @@ package UserServices.Resoluciones;
 
 import BusinessServices.Beans.BeanSentencias;
 import BusinessServices.Beans.BeanUsuario;
+import DataService.Despachadores.Impl.SentenciasDAOImpl;
+import DataService.Despachadores.SentenciasDAO;
 import Utiles.ImportarArchivo;
 import Utiles.Utiles;
 import java.io.IOException;
@@ -40,6 +42,7 @@ public class IduResolucionesPlanillaExcelServlet extends HttpServlet {
     private BeanSentencias objBnSentencias;
     private Connection objConnection;
     private static final long serialVersionUID = 1L;
+    private SentenciasDAO objDsSentencias;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -80,7 +83,10 @@ public class IduResolucionesPlanillaExcelServlet extends HttpServlet {
             }
         }
         ImportarArchivo imp = new ImportarArchivo(objConnection);
-        result = imp.ImportarArchivoPlanillaExcel(objBnSentencias, objUsuario.getUsuario());
+        imp.ImportarArchivoPlanillaExcel(objBnSentencias, objUsuario.getUsuario());
+        System.out.println("procesando planillas");
+        objDsSentencias = new SentenciasDAOImpl(objConnection);
+        result = objDsSentencias.iduResolucionesPlanilla(objBnSentencias, objUsuario.getUsuario());
         // EN CASO DE NO HABER PROBLEMAS RETORNAMOS UNA NUEVA CONSULTA CON TODOS LOS DATOS.
         response.setContentType("text/html;charset=UTF-8");
         if (result == null) {

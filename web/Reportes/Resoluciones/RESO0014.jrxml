@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RESO0004" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="3a88e084-b8ec-4bcd-a0e1-bf2b9863859c">
+	<property name="ireport.zoom" value="1.2100000000000022"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="PERIODO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["2020"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="MES" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["11"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODIGO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="USUARIO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["AdminSISEJE"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="TIPO" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["02"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="CODIGO2" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["3"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT CPERIODO_CODIGO AS PERIODO, SUBSTR(UTIL.FUN_NOMBRE_MES(CMES_CODIGO),4) AS MES, TIPO, PERSONAL_TIPO, 
+TIPO_PAGO, COD_BANCO, BANCO, PLANILLA_DESCRIPCION, PLANILLA_MCPP, NRO_RJ, NRO_SIAF,
+COUNT(*) AS CANTIDAD, SUM(IMPORTE) AS IMPORTE, 
+UTIL.FUN_NOMBRE_USUARIO($P{USUARIO}) AS USUARIO
+FROM V_RESOLUCION_MOVIMIENTO WHERE
+CPERIODO_CODIGO=$P{PERIODO} AND CMES_CODIGO=$P{MES} AND
+CSENTENCIA_TIPO=$P{TIPO} AND NSITUACION_TIPO=$P{CODIGO} AND
+PLANILLA_MCPP=$P{CODIGO2} 
+GROUP BY CPERIODO_CODIGO, CMES_CODIGO, TIPO, TIPO_PAGO, BANCO, NRO_RJ, NRO_SIAF,
+PERSONAL_TIPO, COD_BANCO, PLANILLA_DESCRIPCION, PLANILLA_MCPP
+ORDER BY  TIPO_PAGO, COD_BANCO]]>
+	</queryString>
+	<field name="PERIODO" class="java.lang.String"/>
+	<field name="MES" class="java.lang.String"/>
+	<field name="TIPO" class="java.lang.String"/>
+	<field name="PERSONAL_TIPO" class="java.lang.String"/>
+	<field name="TIPO_PAGO" class="java.lang.String"/>
+	<field name="COD_BANCO" class="java.lang.String"/>
+	<field name="BANCO" class="java.lang.String"/>
+	<field name="PLANILLA_DESCRIPCION" class="java.lang.String"/>
+	<field name="PLANILLA_MCPP" class="java.math.BigDecimal"/>
+	<field name="NRO_RJ" class="java.lang.String"/>
+	<field name="NRO_SIAF" class="java.lang.String"/>
+	<field name="CANTIDAD" class="java.math.BigDecimal"/>
+	<field name="IMPORTE" class="java.math.BigDecimal"/>
+	<field name="USUARIO" class="java.lang.String"/>
+	<variable name="TOTAL_REMUNERACION" class="java.math.BigDecimal" resetType="Group" resetGroup="TIPO_PAGO" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{IMPORTE}]]></variableExpression>
+	</variable>
+	<group name="TIPO_PAGO">
+		<groupExpression><![CDATA[$F{TIPO_PAGO}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<textField>
+					<reportElement mode="Opaque" x="93" y="0" width="367" height="15" backcolor="#CCFFCC" uuid="beed0a8a-c4a7-4969-9b63-bdd8db2815b2"/>
+					<box leftPadding="0">
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{TIPO_PAGO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="18">
+				<textField pattern="#,##0.00;(-#,##0.00)">
+					<reportElement mode="Opaque" x="360" y="0" width="100" height="18" backcolor="#CCFFCC" uuid="5404a135-70c1-4344-b51f-7becfc55e3ce"/>
+					<box rightPadding="2">
+						<leftPen lineWidth="0.0"/>
+						<bottomPen lineWidth="0.5"/>
+						<rightPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{TOTAL_REMUNERACION}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement mode="Opaque" x="93" y="0" width="267" height="18" backcolor="#CCFFCC" uuid="3db06e5e-7803-431f-a4ab-d8bbf58cd4ce"/>
+					<box leftPadding="10">
+						<leftPen lineWidth="0.5"/>
+						<bottomPen lineWidth="0.5"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font fontName="Arial" isBold="true" isItalic="true" pdfFontName="Helvetica-BoldOblique"/>
+					</textElement>
+					<textFieldExpression><![CDATA["TOTAL "+$F{TIPO_PAGO}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="115" splitType="Stretch">
+			<staticText>
+				<reportElement key="staticText" x="0" y="10" width="50" height="10" uuid="3719fd19-af51-4070-9a57-f7b7499632c5"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+				</textElement>
+				<text><![CDATA[RESO0014]]></text>
+			</staticText>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="446" y="10" width="80" height="10" uuid="dea66b55-e0e8-4510-b753-7a8b3fc7bd0f"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página :  "+$V{PAGE_NUMBER}+" de "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="false">
+				<reportElement key="textField" x="443" y="0" width="67" height="10" uuid="604da803-2320-4b87-9ed3-d9b26bcf8799"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Fecha :  "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report" isBlankWhenNull="false">
+				<reportElement key="textField" x="526" y="10" width="40" height="10" uuid="38bb680c-d3d5-4374-8c4b-cfa858484e29"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy HH:mm:ss" isBlankWhenNull="false">
+				<reportElement key="textField" x="474" y="0" width="92" height="10" uuid="4aa51ab1-044d-4add-a25a-6671ea97883b"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="7" pdfFontName="Helvetica"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement key="staticText" x="0" y="0" width="200" height="10" uuid="9a122049-2e16-4e4e-82c8-d1418fd533dc"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="7" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[SISEJE - SISTEMA DE SENTENCIAS JUDICIALES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="50" width="567" height="15" uuid="d121a155-ad13-46ea-b70d-dcc3f8e29286"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PLANILLA DE PAGO DE "+$F{PLANILLA_DESCRIPCION}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="19" width="567" height="15" uuid="4062fc38-a9b2-48f7-83e5-c05dbe835b0f"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SISTEMA DE SENTENCIAS JUDICIALES "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="-1" y="34" width="567" height="15" uuid="9c4ce868-5ee1-41db-9340-dbd56b94ed61"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="11" isBold="true" isUnderline="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{TIPO}+" ("+$F{PERSONAL_TIPO}+")"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="291" y="100" width="69" height="15" backcolor="#FFFFCC" uuid="c6282163-49bc-4c31-b484-e1c473a081fa"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[REGISTROS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="360" y="100" width="100" height="15" backcolor="#FFFFCC" uuid="7aa4dda8-396b-400f-a805-e94cec65918a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="93" y="100" width="198" height="15" backcolor="#FFFFCC" uuid="b73d2eb2-3824-46a5-8e34-6ae6b747037a"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[BANCO]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="65" width="567" height="15" uuid="fcef20bd-336a-4891-a38a-e00de510e1e9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{MES}+" DEL "+$F{PERIODO}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="212" y="79" width="90" height="15" uuid="cf08e5d0-8c40-4ff4-b018-9e694b1b23e2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N° RJ : "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="302" y="79" width="80" height="15" uuid="57919147-e83d-48c6-b4d6-b026bc3fb8d6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_RJ}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="487" y="79" width="80" height="15" uuid="e3e8554c-fba9-43a8-bd5f-7031b3d0eecc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{NRO_SIAF}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="79" width="115" height="15" uuid="f45e14b3-bbf0-4918-89cd-ef98da62ee03"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["NRO PLANILLA SIAF : "]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="115" y="79" width="80" height="15" uuid="4ebe9a45-9c90-4679-ab46-5688bffc77eb"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{PLANILLA_MCPP}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="79" width="90" height="15" uuid="376dbddc-4302-4d28-8839-c18af27710af"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["N° SIAF : "]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField>
+				<reportElement x="93" y="0" width="198" height="15" uuid="5e7a34d9-072f-4d84-80d2-fc30cc6d32e4"/>
+				<box leftPadding="2">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{BANCO}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="291" y="0" width="69" height="15" uuid="a411d4bd-73bf-4cd9-bb23-09f3552623d3"/>
+				<box>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{CANTIDAD}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="360" y="0" width="100" height="15" uuid="7e1841f8-dd3e-4a6b-90f0-442b4696a2f9"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{IMPORTE}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="134" splitType="Stretch">
+			<textField pattern="#,##0.00;(-#,##0.00)">
+				<reportElement x="360" y="0" width="100" height="20" uuid="35e09c79-029c-474a-a5dc-f1a9154d3161"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="93" y="0" width="267" height="20" uuid="b63bc9af-9cb1-4917-95cb-453462e170ed"/>
+				<box leftPadding="10">
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA["TOTAL "]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="62" width="200" height="12" uuid="a301f8a3-fe08-420c-8b03-976a721c5d4b"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[O-232012273-O+]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="96" width="200" height="12" uuid="c6179022-97d8-4260-b83c-573b78cb2d9e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[Jefe de la Sección Procesamiento de Descuento]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="340" y="64" width="200" height="20" uuid="78c7735f-aa14-40d9-b25e-4c005aff2f62"/>
+				<box>
+					<topPen lineWidth="0.5" lineStyle="Dashed"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{USUARIO}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="50" y="84" width="200" height="12" uuid="f14af528-65d8-4692-a14f-f1e7b9682b3e"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[TTE CRL EP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="50" y="72" width="200" height="12" uuid="fb83901f-b885-446c-9707-889f741aba8d"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="9" isBold="true" pdfFontName="Helvetica-Bold"/>
+				</textElement>
+				<text><![CDATA[FREDDY VIDAL CANO]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

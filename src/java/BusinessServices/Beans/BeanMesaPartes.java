@@ -28,6 +28,8 @@ public class BeanMesaPartes implements Serializable {
     private String UsuarioResponsable;
     private String Juzgado;
     private String Conceptos;
+    private String Departamento;
+    private String TipoJuzgado;
     private Date FechaDocumento;
     private Date FechaRecepcion;
     private Integer Folios;
@@ -216,6 +218,22 @@ public class BeanMesaPartes implements Serializable {
         this.Conceptos = Conceptos;
     }
 
+    public String getDepartamento() {
+        return Departamento;
+    }
+
+    public void setDepartamento(String Departamento) {
+        this.Departamento = Departamento;
+    }
+
+    public String getTipoJuzgado() {
+        return TipoJuzgado;
+    }
+
+    public void setTipoJuzgado(String TipoJuzgado) {
+        this.TipoJuzgado = TipoJuzgado;
+    }
+
     public Date getFechaDocumento() {
         return FechaDocumento;
     }
@@ -239,4 +257,5 @@ public class BeanMesaPartes implements Serializable {
     public void setFolios(Integer Folios) {
         this.Folios = Folios;
     }
+    
 }

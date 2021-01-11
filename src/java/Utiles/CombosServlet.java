@@ -62,6 +62,10 @@ public class CombosServlet extends HttpServlet {
                 lista = objDsCombos.getJuzgados(codigo);
                 sb = combo(lista, "id=\"cbo_Juzgados\"");
                 break;
+            case "JUZGADO_DEPARTAMENTO":
+                lista = objDsCombos.getJuzgados(request.getParameter("tipoJuzgado"), request.getParameter("departamento"));
+                sb = combo(lista, "id=\"cbo_Juzgados\"");
+                break;
             case "AREAS":
                 lista = objDsCombos.getAreas(codigo);
                 sb = combo(lista, "id=\"cbo_Areas\"");
@@ -70,9 +74,21 @@ public class CombosServlet extends HttpServlet {
                 lista = objDsCombos.getBancos();
                 sb = combo(lista, "id=\"cbo_Banco\"");
                 break;
+            case "LUGAR":
+                lista = objDsCombos.getLugar(request.getParameter("departamento"));
+                sb = combo(lista, "id=\"cbo_Lugar\"");
+                break;
             case "CONCEPTO_PLANILLA":
                 lista = objDsCombos.getConceptosSentencia(request.getParameter("periodo"), request.getParameter("mes"), request.getParameter("tipo"));
                 sb = combo(lista, "id=\"cbo_Conceptos\" onchange=\"javascript: fn_BuscarDatos();\"");
+                break;
+            case "TIPO_PERSONAL_PLANILLA":
+                lista = objDsCombos.getTipoPersonalPlanilla(request.getParameter("periodo"), request.getParameter("mes"), request.getParameter("tipo"), request.getParameter("tipoPersonal"));
+                sb = combo(lista, "id=\"cbo_Planilla\" onchange=\"javascript: fn_BuscarDatos();\"");
+                break;
+            case "TIPO_PERSONAL_PLANILLA_MCPP":
+                lista = objDsCombos.getTipoPersonalPlanillaMCPP(request.getParameter("periodo"), request.getParameter("mes"), request.getParameter("tipo"), request.getParameter("tipoPersonal"));
+                sb = combo(lista, "id=\"cbo_Planilla\" onchange=\"javascript: fn_BuscarDatos();\"");
                 break;
             case "BENEFICIARIO":
                 sb.append(objDsCombos.getBeneficiario(codigo));
@@ -89,7 +105,6 @@ public class CombosServlet extends HttpServlet {
             default:
                 break;
         }
-
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.print(sb);

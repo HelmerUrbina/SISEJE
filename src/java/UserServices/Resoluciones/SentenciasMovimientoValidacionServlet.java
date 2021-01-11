@@ -72,6 +72,7 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
         objBnSentencias.setPeriodo(request.getParameter("periodo"));
         objBnSentencias.setMes(request.getParameter("mes"));
         objBnSentencias.setTipo(request.getParameter("tipo"));
+        objBnSentencias.setPersonal(request.getParameter("personal"));
         objBnSentencias.setTipoCambio(Utiles.Utiles.checkDouble(request.getParameter("tipoCambio")));
         objDsSentencias = new SentenciasDAOImpl(objConnection);
         // DE ACUERO AL MODO, OBTENEMOS LOS DATOS NECESARIOS.  
@@ -87,14 +88,14 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
             request.setAttribute("objTipo", objCombos.getAreaResolucion());
         }
         if (objBnSentencias.getMode().equals("G")) {
-            result = "" + TablaSentenciasMovimiento(objDsSentencias.getListaResolucionesMovimientos(objBnSentencias));
+            result = "" + TablaSentenciasMovimiento();
         }
         if (objBnSentencias.getMode().equals("E")) {
             int nombreArchivo = (int) Math.floor(Math.random() * 100000000);
             objConsulta = objDsSentencias.getListaResolucionesMovimientoValidacion(objBnSentencias);
             ExportarExcel exportExcel = new ExportarExcel();
             String archivo = "C:/SISEJE/Temporal/" + nombreArchivo + ".xlsx";
-            exportExcel.GenerarArchivoMovimientos("" + archivo, objConsulta);
+            exportExcel.GenerarArchivoValidacionPlanilla("" + archivo, objConsulta);
             result = "CORRECTO";
             File fileToDownload = new File(archivo);
             try (FileInputStream fileInputStream = new FileInputStream(fileToDownload);
@@ -135,36 +136,34 @@ public class SentenciasMovimientoValidacionServlet extends HttpServlet {
         }
     }
 
-    private StringBuilder TablaSentenciasMovimiento(List lista) {
+    private StringBuilder TablaSentenciasMovimiento() {
         StringBuilder sb = new StringBuilder();
-        if (lista != null) {
-            sb.append("<table class=\"table table-striped table-hover\">");
-            sb.append("<thead>");
-            sb.append("<tr>");
-            sb.append("<th style=\"text-align: center\">NUMERO</th>");
-            sb.append("<th style=\"text-align: center\">ESTADO</th>");
-            sb.append("</tr>");
-            sb.append("</thead>");
-            sb.append("<tbody>");
-            sb.append("<tr>");
-            sb.append("<td style=\"text-align: center\">").append("1").append("</td>");
-            sb.append("<td style=\"text-align: center\">").append("DESCARGA SENTENCIAS PROCESADAS").append("</td>");
-            sb.append("<td style=\"text-align: center\">");
-            sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Exportar Datos a Excel\" onclick=\"javascript: fn_ExportarExcel();\">");
-            sb.append("<i class=\"material-icons\">cloud_download</i>").append("</button>");
-            sb.append("</td>");
-            sb.append("</tr>");
-            sb.append("<tr>");
-            sb.append("<td style=\"text-align: center\">").append("2").append("</td>");
-            sb.append("<td style=\"text-align: center\">").append("SUBIR PLANILLAS MCPP").append("</td>");
-            sb.append("<td style=\"text-align: center\">");
-            sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Importat Datos de Excel\" onclick=\"javascript: fn_ImportarExcel();\">");
-            sb.append("<i class=\"material-icons\">cloud_upload</i>").append("</button>");
-            sb.append("</td>");
-            sb.append("</tr>");
-            sb.append("</tbody>");
-            sb.append("</table>");
-        }
+        sb.append("<table class=\"table table-striped table-hover\">");
+        sb.append("<thead>");
+        sb.append("<tr>");
+        sb.append("<th style=\"text-align: center\">NUMERO</th>");
+        sb.append("<th style=\"text-align: center\">ESTADO</th>");
+        sb.append("</tr>");
+        sb.append("</thead>");
+        sb.append("<tbody>");
+        sb.append("<tr>");
+        sb.append("<td style=\"text-align: center\">").append("1").append("</td>");
+        sb.append("<td style=\"text-align: center\">").append("DESCARGA SENTENCIAS PROCESADAS").append("</td>");
+        sb.append("<td style=\"text-align: center\">");
+        sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Exportar Datos a Excel\" onclick=\"javascript: fn_ExportarExcel();\">");
+        sb.append("<i class=\"material-icons\">cloud_download</i>").append("</button>");
+        sb.append("</td>");
+        sb.append("</tr>");
+        sb.append("<tr>");
+        sb.append("<td style=\"text-align: center\">").append("2").append("</td>");
+        sb.append("<td style=\"text-align: center\">").append("SUBIR PLANILLAS MCPP").append("</td>");
+        sb.append("<td style=\"text-align: center\">");
+        sb.append("<button type=\"button\" class=\"btn bg-green btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Importat Datos de Excel\" onclick=\"javascript: fn_ImportarExcel();\">");
+        sb.append("<i class=\"material-icons\">cloud_upload</i>").append("</button>");
+        sb.append("</td>");
+        sb.append("</tr>");
+        sb.append("</tbody>");
+        sb.append("</table>");
         return sb;
     }
 

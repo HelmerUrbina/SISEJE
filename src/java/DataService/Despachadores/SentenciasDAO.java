@@ -47,12 +47,14 @@ public interface SentenciasDAO {
 
     public int iduCerrarResoluciones(BeanSentencias objBeanSentencias, String usuario);
 
-    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario);
-
     public String iduResolucionesMovimientos(BeanSentencias objBeanSentencias, String usuario);
 
     public String iduResolucionesProcesoDescuentos(BeanSentencias objBeanSentencias, String usuario);
 
     public String iduResolucionesProceso(BeanSentencias objBeanSentencias, String usuario);
+
+    public String iduResolucionesPlanillaArchivo(BeanSentencias objBeanSentencias, String usuario);
+
+    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario);
 
 }

@@ -125,11 +125,12 @@
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
+                var personal = $('#cbo_Personal').val();
                 var $contenidoAjax = $('#TablaResultados').html('<img src="../Imagenes/cargando.gif" height="800" width="500" />');
                 $.ajax({
                     type: "GET",
                     url: "SentenciasMovimientoValidacion",
-                    data: {mode: 'G', periodo: periodo, mes: mes, tipo: tipo},
+                    data: {mode: 'G', periodo: periodo, mes: mes, tipo: tipo, personal: personal},
                     success: function (data) {
                         $contenidoAjax.html(data);
                         $('[data-toggle="tooltip"]').tooltip();
@@ -140,7 +141,8 @@
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
-                var url = 'SentenciasMovimientoValidacion?mode=E&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo;
+                var personal = $('#cbo_Personal').val();
+                var url = 'SentenciasMovimientoValidacion?mode=E&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&personal=' + personal;
                 window.open(url, '_blank');
             }
             function fn_ImportarExcel() {
@@ -158,6 +160,7 @@
                     var periodo = $('#cbo_Periodo').val();
                     var mes = $('#cbo_Mes').val();
                     var tipo = $('#cbo_Tipo').val();
+                    var personal = $('#cbo_Personal').val();
                     var archivo = $("#txt_Archivo").val();
                     if (archivo !== '') {
                         var formData = new FormData(document.getElementById("frm_SentenciasPlanillaArchivo"));
@@ -165,6 +168,7 @@
                         formData.append("periodo", periodo);
                         formData.append("mes", mes);
                         formData.append("tipo", tipo);
+                        formData.append("personal", personal);
                         formData.append("flag", flag);
                         formData.append("archivo", archivo);
                         $.ajax({
@@ -226,7 +230,7 @@
         <section class="content">
             <div class="container-fluid">
                 <div class="block-header">
-                    <h3><strong>Sentencias Movimientos</strong></h3>
+                    <h3><strong>Validación de Planillas MCPP</strong></h3>
                 </div>
                 <!-- Tabs With Icon Title -->
                 <div class="row clearfix">
@@ -282,18 +286,31 @@
                                         </button>
                                     </div>
                                 </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-1 form-control-label">
+                                        <label for="numero">Personal</label>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="cbo_Personal" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                            <option value="0">Seleccione</option>
+                                            <option value="1" selected="selected">ACTIVIDAD</option>
+                                            <option value="2">PENSIONISTA</option>
+                                        </select>
+                                    </div>
+
+                                </div>
                             </div>
                             <div class="body"> 
                                 <!-- Tab panes -->
                                 <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane fade in active" id="ListarMesaPartes">
+                                    <div role="tabpanel" class="tab-pane fade in active" id="ListarValidacionMCPP">
                                         <!-- Striped Rows -->
                                         <div class="row clearfix">
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="card">
                                                     <div class="header bg-teal">
                                                         <h2 class="col-md-10 col-sm-9 col-xs-8">
-                                                            <strong>Listado de Sentencias a Procesar</strong>
+                                                            <strong>Listado de Registros</strong>
                                                         </h2>
                                                         <br>
                                                     </div>
@@ -341,7 +358,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
                         </div>

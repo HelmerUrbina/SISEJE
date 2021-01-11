@@ -78,6 +78,10 @@ public class SentenciasServlet extends HttpServlet {
                 request.removeAttribute("objTipoPagos");
             }
             request.setAttribute("objTipoPagos", objCombos.getTipoPagos());
+            if (request.getAttribute("objDepartamentos") != null) {
+                request.removeAttribute("objDepartamentos");
+            }
+            request.setAttribute("objDepartamentos", objCombos.getDepartamentos());
         }
         if (objBnSentencias.getMode().equals("B")) {
             result = "" + BuscarPersonal(objDsSentencias.getListaBuscaPersonal(request.getParameter("personal"), request.getParameter("cip")));
@@ -114,7 +118,10 @@ public class SentenciasServlet extends HttpServlet {
                     + objBnSentencias.getOficio() + "+++"
                     + objBnSentencias.getFechaFin() + "+++"
                     + objBnSentencias.getJuez() + "+++"
-                    + objBnSentencias.getJuzgado();
+                    + objBnSentencias.getJuzgado() + "+++"
+                    + objBnSentencias.getDepartamento() + "+++"
+                    + objBnSentencias.getLugar() + "+++"
+                    + objBnSentencias.getTipoPago();
         }
         if (objBnSentencias.getMode().equals("RB")) {
             objBnSentencias = objDsSentencias.getBeneficiario(objBnSentencias);
@@ -270,7 +277,8 @@ public class SentenciasServlet extends HttpServlet {
             sb.append("<th style=\"text-align: center\">RESOLUCIÓN</th>");
             sb.append("<th style=\"text-align: center\">MESA DE PARTES</th>");
             sb.append("<th style=\"text-align: center\">EXPEDIENTE</th>");
-            sb.append("<th style=\"text-align: center\">FECHA</th>");
+            sb.append("<th style=\"text-align: center\">FEC. EXPED</th>");
+            sb.append("<th style=\"text-align: center\">FEC. REGISTRO</th>");
             sb.append("<th style=\"text-align: center\">FORMA DE PAGO</th>");
             sb.append("<th style=\"text-align: center\">ESTADO</th>");
             sb.append("<th style=\"text-align: center\">ACCIÓN</th>");
@@ -284,6 +292,7 @@ public class SentenciasServlet extends HttpServlet {
                 sb.append("<td style=\"text-align: center\">").append(resolucion.getMesaPartes()).append("</td>");
                 sb.append("<td style=\"text-align: center\">").append(resolucion.getExpediente()).append("</td>");
                 sb.append("<td style=\"text-align: center\">").append(resolucion.getFecha()).append("</td>");
+                sb.append("<td style=\"text-align: center\">").append(resolucion.getFechaIngreso()).append("</td>");
                 sb.append("<td style=\"text-align: center\">").append(resolucion.getGrado()).append("</td>");
                 sb.append("<td style=\"text-align: center\">");
                 switch (resolucion.getSituacion()) {

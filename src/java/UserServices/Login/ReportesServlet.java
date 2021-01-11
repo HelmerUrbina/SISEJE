@@ -77,7 +77,6 @@ public class ReportesServlet extends HttpServlet {
                 break;
             case "MPAR0002":
                 nombre = "MesaPartes/MPAR0002.jasper";
-
                 break;
             //REPORTES DEL MODULO DE SENTENCIAS
             case "RESO0001":
@@ -113,6 +112,51 @@ public class ReportesServlet extends HttpServlet {
                     reporte.setCodigo("%");
                 }
                 break;
+            case "RESO0007":
+                nombre = "Resoluciones/RESO0007.jasper";
+                break;
+            case "RESO0008":
+                nombre = "Resoluciones/RESO0008.jasper";
+                break;
+            case "RESO0009":
+                nombre = "Resoluciones/RESO0009.jasper";
+                break;
+            case "RESO0010":
+                nombre = "Resoluciones/RESO0010.jasper";
+                break;
+            case "RESO0011":
+                nombre = "Resoluciones/RESO0011.jasper";
+                break;
+            case "RESO0012":
+                nombre = "Resoluciones/RESO0012.jasper";
+                break;
+            case "RESO0013":
+                nombre = "Resoluciones/RESO0013.jasper";
+                break;
+            case "RESO0014":
+                nombre = "Resoluciones/RESO0014.jasper";
+                break;
+            case "RESO0015":
+                nombre = "Resoluciones/RESO0015.jasper";
+                break;
+            case "RESO0016":
+                nombre = "Resoluciones/RESO0016.jasper";
+                break;
+            case "RESO0017":
+                nombre = "Resoluciones/RESO0017.jasper";
+                break;
+            case "RESO0018":
+                nombre = "Resoluciones/RESO0018.jasper";
+                break;
+            case "RESO0019":
+                nombre = "Resoluciones/RESO0019.jasper";
+                break;
+            case "RESO0020":
+                nombre = "Resoluciones/RESO0020.jasper";
+                break;
+            case "RESO0021":
+                nombre = "Resoluciones/RESO0021.jasper";
+                break;
             default:
                 break;
         }
@@ -139,7 +183,6 @@ public class ReportesServlet extends HttpServlet {
         exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
         exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, response.getOutputStream());
         exporter.exportReport();
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

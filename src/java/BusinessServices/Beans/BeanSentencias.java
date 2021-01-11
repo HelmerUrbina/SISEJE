@@ -23,11 +23,14 @@ public class BeanSentencias implements Serializable {
     private String TipoPago;
     private String TipoRemuneracion;
     private String Tipo;
+    private String TipoPersonal;
     private String TipoMoneda;
     private String Mes;
     private String Archivo;
     private String Banco;
     private String Beneficiario;
+    private String Departamento;
+    private String Lugar;
     private Date Fecha;
     private Date FechaIngreso;
     private Date FechaFin;
@@ -184,6 +187,14 @@ public class BeanSentencias implements Serializable {
         this.Tipo = Tipo;
     }
 
+    public String getTipoPersonal() {
+        return TipoPersonal;
+    }
+
+    public void setTipoPersonal(String TipoPersonal) {
+        this.TipoPersonal = TipoPersonal;
+    }
+
     public String getTipoMoneda() {
         return TipoMoneda;
     }
@@ -222,6 +233,22 @@ public class BeanSentencias implements Serializable {
 
     public void setBeneficiario(String Beneficiario) {
         this.Beneficiario = Beneficiario;
+    }
+
+    public String getDepartamento() {
+        return Departamento;
+    }
+
+    public void setDepartamento(String Departamento) {
+        this.Departamento = Departamento;
+    }
+
+    public String getLugar() {
+        return Lugar;
+    }
+
+    public void setLugar(String Lugar) {
+        this.Lugar = Lugar;
     }
 
     public Date getFecha() {

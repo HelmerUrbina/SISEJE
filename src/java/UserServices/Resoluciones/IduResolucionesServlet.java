@@ -73,6 +73,8 @@ public class IduResolucionesServlet extends HttpServlet {
         objBnSentencias.setFecha(new java.sql.Date(fechaExpediente.getTime()));
         objBnSentencias.setJuez(request.getParameter("juez")); 
         objBnSentencias.setJuzgado(request.getParameter("juzgado"));
+        objBnSentencias.setLugar(request.getParameter("lugar"));
+        objBnSentencias.setDepartamento(request.getParameter("departamento"));
         objBnSentencias.setTipoPago(request.getParameter("tipoPago"));
         objBnSentencias.setCuotas(Utiles.Utiles.checkNum(request.getParameter("cuotas")));
         objBnSentencias.setMonto(Utiles.Utiles.checkDouble(request.getParameter("monto")));

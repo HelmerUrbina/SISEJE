@@ -144,11 +144,12 @@
                 $("#txt_Asunto").val('');
                 $("#txt_FechaDocumento").val('');
                 $('#cbo_Prioridad').selectpicker('val', '1');
+                $('#cbo_TipoJuzgados').selectpicker('val', '0');
+                $('#cbo_Departamento').selectpicker('val', '15');
                 $('#cbo_Juzgados').selectpicker('val', '0');
                 $("#txt_Folios").val('0');
                 $("#txt_PostFirma").val('');
                 $("#txt_FechaRecepcion").val('');
-                //$("#txt_Numero").focus();
                 $.ajax({
                     type: "GET",
                     url: "MesaPartes",
@@ -159,6 +160,7 @@
                         $('#txt_FechaRecepcion').val(strDate);
                         $('#RegistrarMesaPartes .modal-content').removeAttr('class').addClass('modal-content modal-col-default');
                         $('#RegistrarMesaPartes').modal('show');
+                        cargarJuzgados();
                         $("#txt_Numero:focus");
                         $('#txt_Numero').focus();
                     }
@@ -174,7 +176,9 @@
                     data: {mode: mode, periodo: periodo, codigo: codigo},
                     success: function (data) {
                         var dato = data.trim().split("+++");
-                        if (dato.length === 12) {
+                        if (dato.length === 15) {
+                            $('#cbo_TipoJuzgados').selectpicker('val', dato[9]);
+                            $('#cbo_Departamento').selectpicker('val', dato[10]);
                             $('#txt_Numero').val(dato[0]);
                             $("#txt_FechaRecepcion").val(dato[1]);
                             $('#cbo_TipoDocumento').selectpicker('val', dato[2]);
@@ -184,8 +188,10 @@
                             $("#txt_FechaDocumento").val(dato[6]);
                             $('#cbo_Prioridad').selectpicker('val', dato[7]);
                             $("#txt_Folios").val(dato[8]);
-                            $('#cbo_Juzgados').selectpicker('val', dato[9]);
-                            $("#txt_PostFirma").val(dato[10]);
+                            $('#cbo_Juzgados').append("<option value=" + dato[11] + ">" + dato[12] + "</option>");
+                            $('#cbo_Juzgados').selectpicker('val', dato[11]);
+                            $('#cbo_Juzgados').selectpicker('refresh');
+                            $("#txt_PostFirma").val(dato[13]);
                             $('#RegistrarMesaPartes .modal-content').removeAttr('class').addClass('modal-content modal-col-default');
                             $('#RegistrarMesaPartes').modal('show');
                         }
@@ -218,14 +224,17 @@
                 var fechaDocumento = $("#txt_FechaDocumento").val();
                 var prioridad = $("#cbo_Prioridad").val();
                 var folios = $("#txt_Folios").val();
+                var tipoJuzgado = $("#cbo_TipoJuzgados").val();
+                var departamento = $("#cbo_Departamento").val();
                 var juzgado = $("#cbo_Juzgados").val();
                 var firma = $("#txt_PostFirma").val();
                 $.ajax({
                     type: "POST",
                     url: "IduMesaPartes",
-                    data: {mode: mode, periodo: periodo, tipo: 'I', codigo: codigo, fechaRecepcion: fechaRecepcion, tipoDocumento: tipoDocumento,
-                        numero: numero, numeroDocumento: numeroDocumento, indicativo: indicativo, asunto: asunto,
-                        fechaDocumento: fechaDocumento, prioridad: prioridad, folios: folios, juzgado: juzgado, firma: firma},
+                    data: {mode: mode, periodo: periodo, tipo: 'I', codigo: codigo, fechaRecepcion: fechaRecepcion,
+                        tipoDocumento: tipoDocumento, numero: numero, numeroDocumento: numeroDocumento, indicativo: indicativo,
+                        asunto: asunto, fechaDocumento: fechaDocumento, prioridad: prioridad, folios: folios, tipoJuzgado: tipoJuzgado,
+                        departamento: departamento, juzgado: juzgado, firma: firma},
                     success: function (data) {
                         msg = data;
                         if (msg === "GUARDO") {
@@ -301,6 +310,20 @@
                 var dia = $('#txt_Dia').val();
                 var url = 'Reportes?reporte=MPAR0001&periodo=' + periodo + '&mes=' + mes + "&codigo=" + dia;
                 window.open(url, '_blank');
+            }
+            function cargarJuzgados() {
+                var tipoJuzgado = $("#cbo_TipoJuzgados").val();
+                var departamento = $("#cbo_Departamento").val();
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'JUZGADO_DEPARTAMENTO', tipoJuzgado: tipoJuzgado, departamento: departamento},
+                    success: function (data) {
+                        $('#cbo_Juzgados').empty();
+                        $('#cbo_Juzgados').append(data);
+                        $('#cbo_Juzgados').selectpicker('refresh');
+                    }
+                });
             }
         </script>
     </head>
@@ -504,9 +527,31 @@
                                                             <div class="col-sm-2">
                                                                 <div class="form-group">
                                                                     <div class="form-line">
-                                                                        <input type="text" id="txt_Folios" class="form-control" maxlength="20" onKeyPress="ntab(event, 'cbo_Juzgados');" required>
+                                                                        <input type="text" id="txt_Folios" class="form-control" maxlength="20" onKeyPress="ntab(event, 'cbo_TipoJuzgados');" required>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row clearfix">
+                                                            <div class="col-sm-2 form-control-label">
+                                                                <label for="tipoJuzgado">Tipo Juzgado</label>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <select id="cbo_TipoJuzgados" name="cbo_TipoJuzgados" class="form-control" onchange="javascript: cargarJuzgados();" required>
+                                                                    <c:forEach var="g" items="${objTipoJuzgados}">
+                                                                        <option  value="${g.codigo}">${g.descripcion}</option>
+                                                                    </c:forEach>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-2 form-control-label">
+                                                                <label for="lugar">Departamento</label>
+                                                            </div>
+                                                            <div class="col-sm-3">
+                                                                <select id="cbo_Departamento" name="cbo_Departamento" class="form-control" onchange="javascript: cargarJuzgados();" required>
+                                                                    <c:forEach var="h" items="${objDepartamento}">
+                                                                        <option  value="${h.codigo}">${h.descripcion}</option>
+                                                                    </c:forEach>
+                                                                </select>
                                                             </div>
                                                         </div>
                                                         <div class="row clearfix">
@@ -516,9 +561,6 @@
                                                             <div class="col-sm-10">
                                                                 <select id="cbo_Juzgados" name="cbo_Juzgados" class="form-control" data-live-search="true" onchange="javascript: ntab(event, 'txt_PostFirma');" required>
                                                                     <option value="0">SELECCIONE</option>
-                                                                    <c:forEach var="g" items="${objJuzgados}">
-                                                                        <option  value="${g.codigo}">${g.descripcion}</option>
-                                                                    </c:forEach>
                                                                 </select>
                                                             </div>
                                                         </div>

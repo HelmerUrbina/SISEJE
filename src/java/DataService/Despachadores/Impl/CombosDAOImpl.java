@@ -307,7 +307,7 @@ public class CombosDAOImpl implements CombosDAO {
     @Override
     public List getTipoJuzgados() {
         lista = new LinkedList<>();
-        sql = "SELECT NTIPO_JUZGADO_CODIGO AS CODIGO, VTIPO_JUZGADO_DESCRIPCION AS DESCRIPCION "
+        sql = "SELECT NTIPO_JUZGADO_CODIGO AS CODIGO, UPPER(VTIPO_JUZGADO_DESCRIPCION) AS DESCRIPCION "
                 + "FROM SISEJE_TIPO_JUZGADOS WHERE "
                 + "CESTADO_CODIGO='AC' "
                 + "ORDER BY CODIGO";
@@ -460,6 +460,40 @@ public class CombosDAOImpl implements CombosDAO {
     }
 
     @Override
+    public List getJuzgados(String tipoJuzgado, String departamento) {
+        lista = new LinkedList<>();
+        sql = "SELECT NJUZGADO_CODIGO AS CODIGO, VJUZGADO_NOMBRE AS DESCRIPCION "
+                + "FROM SISEJE_JUZGADOS WHERE "
+                + "NTIPO_JUZGADO_CODIGO=? AND "
+                + "CDEPARTAMENTO_CODIGO=?  "
+                + "ORDER BY DESCRIPCION";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, tipoJuzgado);
+            objPreparedStatement.setString(2, departamento);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnComun = new BeanComun();
+                objBnComun.setCodigo(objResultSet.getString("CODIGO"));
+                objBnComun.setDescripcion(objResultSet.getString("DESCRIPCION"));
+                lista.add(objBnComun);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getJuzgados('" + tipoJuzgado + "', '" + departamento + "') : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
     public List getBancos() {
         lista = new LinkedList<>();
         sql = "SELECT NBANCO_CODIGO AS CODIGO, VBANCO_NOMBRE AS DESCRIPCION "
@@ -477,6 +511,39 @@ public class CombosDAOImpl implements CombosDAO {
             }
         } catch (SQLException e) {
             System.out.println("Error al obtener getBancos() : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+    
+    @Override
+    public List getLugar(String departamento) {
+        lista = new LinkedList<>();
+        sql = "SELECT CLUGAR_CODIGO AS CODIGO, VLUGAR_SUCURSAL AS DESCRIPCION "
+                + "FROM SISEJE_LUGAR WHERE "
+                + "CESTADO_CODIGO='AC' AND "
+                + "CDEPARTAMENTO_CODIGO=? "
+                + "ORDER BY CODIGO";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, departamento);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnComun = new BeanComun();
+                objBnComun.setCodigo(objResultSet.getString("CODIGO"));
+                objBnComun.setDescripcion(objResultSet.getString("DESCRIPCION"));
+                lista.add(objBnComun);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getLugar("+departamento+") : " + e.getMessage());
         } finally {
             try {
                 if (objResultSet != null) {
@@ -637,11 +704,89 @@ public class CombosDAOImpl implements CombosDAO {
     }
 
     @Override
+    public List getTipoPersonalPlanilla(String periodo, String mes, String tipo, String tipoPersonal) {
+        lista = new LinkedList<>();
+        sql = "SELECT CPLANILLA_CODIGO AS CODIGO, PLANILLA_ABREVIATURA AS DESCRIPCION "
+                + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO=? AND "
+                + "CMES_CODIGO=? AND "
+                + "CSENTENCIA_TIPO=? AND "
+                + "NSITUACION_TIPO=? "
+                + "GROUP BY CPLANILLA_CODIGO, PLANILLA_ABREVIATURA "
+                + "ORDER BY CODIGO";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, periodo);
+            objPreparedStatement.setString(2, mes);
+            objPreparedStatement.setString(3, tipo);
+            objPreparedStatement.setString(4, tipoPersonal);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnComun = new BeanComun();
+                objBnComun.setCodigo(objResultSet.getString("CODIGO"));
+                objBnComun.setDescripcion(objResultSet.getString("DESCRIPCION"));
+                lista.add(objBnComun);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getTipoPersonalPlanilla('" + periodo + "','" + mes + "','" + tipo + "','" + tipoPersonal + "') : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
+    public List getTipoPersonalPlanillaMCPP(String periodo, String mes, String tipo, String tipoPersonal) {
+        lista = new LinkedList<>();
+        sql = "SELECT PLANILLA_MCPP AS CODIGO, PLANILLA_MCPP AS DESCRIPCION "
+                + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO=? AND "
+                + "CMES_CODIGO=? AND "
+                + "CSENTENCIA_TIPO=? AND "
+                + "NSITUACION_TIPO=? "
+                + "GROUP BY PLANILLA_MCPP "
+                + "ORDER BY CODIGO";
+        try {
+            objPreparedStatement = objConnection.prepareStatement(sql);
+            objPreparedStatement.setString(1, periodo);
+            objPreparedStatement.setString(2, mes);
+            objPreparedStatement.setString(3, tipo);
+            objPreparedStatement.setString(4, tipoPersonal);
+            objResultSet = objPreparedStatement.executeQuery();
+            while (objResultSet.next()) {
+                objBnComun = new BeanComun();
+                objBnComun.setCodigo(objResultSet.getString("CODIGO"));
+                objBnComun.setDescripcion(objResultSet.getString("DESCRIPCION"));
+                lista.add(objBnComun);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al obtener getTipoPersonalPlanilla('" + periodo + "','" + mes + "','" + tipo + "','" + tipoPersonal + "') : " + e.getMessage());
+        } finally {
+            try {
+                if (objResultSet != null) {
+                    objResultSet.close();
+                    objPreparedStatement.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        return lista;
+    }
+
+    @Override
     public String getBeneficiario(String codigo) {
         String result = "";
-        sql = "SELECT DISTINCT VBENEFICIARIO_PATERNO AS PATERNO, VBENEFICIARIO_MATERNO AS MATERNO, "
-                + "VBENEFICIARIO_NOMBRES AS NOMBRES, DBENEFICIARIO_NACIMIENTO AS FECHA, "
-                + "NVL(VBENEFICIARIO_RAZON_SOCIAL,' ') AS RAZON_SOCIAL, NVL(VBENEFICIARIO_RUC,' ') AS RUC "
+        sql = "SELECT DISTINCT NVL(VBENEFICIARIO_PATERNO,'') AS PATERNO, NVL(VBENEFICIARIO_MATERNO,'') AS MATERNO, "
+                + "NVL(VBENEFICIARIO_NOMBRES,'') AS NOMBRES, DBENEFICIARIO_NACIMIENTO AS FECHA, "
+                + "NVL(VBENEFICIARIO_RAZON_SOCIAL,'') AS RAZON_SOCIAL, NVL(VBENEFICIARIO_RUC,'') AS RUC "
                 + "FROM SISEJE_BENEFICIARIO WHERE "
                 + "TRIM(VBENEFICIARIO_DOCUMENTO)=TRIM(?) ";
         try {

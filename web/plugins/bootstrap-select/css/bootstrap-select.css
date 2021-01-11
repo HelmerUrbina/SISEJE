@@ -252,7 +252,7 @@ select.selectpicker {
 .bs-searchbox,
 .bs-actionsbox,
 .bs-donebutton {
-    padding: 4px 8px;
+    padding: 4px 4px;
 }
 .bs-actionsbox {
     width: 100%;
@@ -274,7 +274,7 @@ select.selectpicker {
     width: 100%;
 }
 .bs-searchbox + .bs-actionsbox {
-    padding: 0 8px 4px;
+    padding: 0 4px 4px;
 }
 .bs-searchbox .form-control {
     margin-bottom: 0;

@@ -98,7 +98,7 @@ public class SentenciasPlanillaMCPPServlet extends HttpServlet {
             objConsulta = objDsSentencias.getListaResolucionesMovimientoValidacion(objBnSentencias);
             ExportarExcel exportExcel = new ExportarExcel();
             String archivo = "C:/SISEJE/Temporal/" + nombreArchivo + ".xlsx";
-            exportExcel.GenerarArchivoMovimientos("" + archivo, objConsulta);
+            exportExcel.GenerarArchivoValidacionPlanilla("" + archivo, objConsulta);
             result = "CORRECTO";
             File fileToDownload = new File(archivo);
             try (FileInputStream fileInputStream = new FileInputStream(fileToDownload);

@@ -125,7 +125,9 @@ public class MesaPartesDAOImpl implements MesaPartesDAO {
         sql = "SELECT LPAD(NMESA_PARTES_CORRELATIVO,6,0) AS NUMERO, DMESA_PARTES_RECEPCION, "
                 + "NTIPO_DOCUMENTO_CODIGO, VMESA_PARTES_DOCUMENTO, VMESA_PARTES_INDICATIVO, "
                 + "UPPER(VMESA_PARTES_ASUNTO) AS ASUNTO, DMESA_PARTES_FECHA, NPRIORIDAD_CODIGO, NMESA_PARTES_FOLIOS, "
-                + "NJUZGADO_CODIGO, UPPER(VMESA_PARTES_POST_FIRMA) AS POST_FIRMA, VMESA_PARTES_DIGITAL "
+                + "NTIPO_JUZGADO_CODIGO, CDEPARTAMENTO_CODIGO, NJUZGADO_CODIGO, "
+                + "UTIL.FUN_NOMBRE_JUZGADO(NJUZGADO_CODIGO) AS JUZGADO, "
+                + "UPPER(VMESA_PARTES_POST_FIRMA) AS POST_FIRMA, VMESA_PARTES_DIGITAL "
                 + "FROM SISEJE_MESA_PARTES WHERE "
                 + "CPERIODO_CODIGO=? AND  "
                 + "CMESA_PARTES_TIPO='I' AND  "
@@ -145,7 +147,10 @@ public class MesaPartesDAOImpl implements MesaPartesDAO {
                 objBeanMesaPartes.setFechaDocumento(objResultSet.getDate("DMESA_PARTES_FECHA"));
                 objBeanMesaPartes.setPrioridad(objResultSet.getString("NPRIORIDAD_CODIGO"));
                 objBeanMesaPartes.setFolios(objResultSet.getInt("NMESA_PARTES_FOLIOS"));
+                objBeanMesaPartes.setTipoJuzgado(objResultSet.getString("NTIPO_JUZGADO_CODIGO"));
+                objBeanMesaPartes.setDepartamento(objResultSet.getString("CDEPARTAMENTO_CODIGO"));
                 objBeanMesaPartes.setJuzgado(objResultSet.getString("NJUZGADO_CODIGO"));
+                objBeanMesaPartes.setUsuarioResponsable(objResultSet.getString("JUZGADO"));
                 objBeanMesaPartes.setPostFirma(objResultSet.getString("POST_FIRMA"));
                 objBeanMesaPartes.setArchivo(objResultSet.getString("VMESA_PARTES_DIGITAL"));
             }
@@ -195,7 +200,7 @@ public class MesaPartesDAOImpl implements MesaPartesDAO {
 
     @Override
     public int iduMesaPartes(BeanMesaPartes objBeanMesaPartes, String usuario) {
-        sql = "{CALL SP_IDU_MESA_PARTES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+        sql = "{CALL SP_IDU_MESA_PARTES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
         try (CallableStatement cs = objConnection.prepareCall(sql)) {
             cs.setString(1, objBeanMesaPartes.getPeriodo());
             cs.setString(2, objBeanMesaPartes.getTipo());
@@ -207,12 +212,14 @@ public class MesaPartesDAOImpl implements MesaPartesDAO {
             cs.setDate(8, objBeanMesaPartes.getFechaDocumento());
             cs.setString(9, objBeanMesaPartes.getPrioridad());
             cs.setInt(10, objBeanMesaPartes.getFolios());
-            cs.setString(11, objBeanMesaPartes.getJuzgado());
-            cs.setString(12, objBeanMesaPartes.getPostFirma());
-            cs.setString(13, objBeanMesaPartes.getArchivo());
-            cs.setString(14, objBeanMesaPartes.getEstado());
-            cs.setString(15, usuario);
-            cs.setString(16, objBeanMesaPartes.getMode().toUpperCase());
+            cs.setString(11, objBeanMesaPartes.getTipoJuzgado());
+            cs.setString(12, objBeanMesaPartes.getDepartamento());
+            cs.setString(13, objBeanMesaPartes.getJuzgado());
+            cs.setString(14, objBeanMesaPartes.getPostFirma());
+            cs.setString(15, objBeanMesaPartes.getArchivo());
+            cs.setString(16, objBeanMesaPartes.getEstado());
+            cs.setString(17, usuario);
+            cs.setString(18, objBeanMesaPartes.getMode().toUpperCase());
             s = cs.executeUpdate();
             cs.close();
         } catch (SQLException e) {

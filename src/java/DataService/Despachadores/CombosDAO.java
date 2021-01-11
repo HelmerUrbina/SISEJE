@@ -32,7 +32,11 @@ public interface CombosDAO {
 
     public List getJuzgados(String tipoJuzgado);
 
+    public List getJuzgados(String tipoJuzgado, String departamento);
+
     public List getBancos();
+
+    public List getLugar(String departamento);
 
     public List getMesaPartes(String periodo, Integer area);
 
@@ -41,6 +45,10 @@ public interface CombosDAO {
     public List getTipoMonedas();
 
     public List getConceptosSentencia(String periodo, String mes, String tipo);
+
+    public List getTipoPersonalPlanilla(String periodo, String mes, String tipo, String tipoPersonal);
+
+    public List getTipoPersonalPlanillaMCPP(String periodo, String mes, String tipo, String tipoPersonal);
 
     public String getBeneficiario(String codigo);
 

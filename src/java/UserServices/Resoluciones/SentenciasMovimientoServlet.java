@@ -64,6 +64,7 @@ public class SentenciasMovimientoServlet extends HttpServlet {
         objBnSentencias.setPeriodo(request.getParameter("periodo"));
         objBnSentencias.setMes(request.getParameter("mes"));
         objBnSentencias.setTipo(request.getParameter("tipo"));
+        objBnSentencias.setTipoPersonal(request.getParameter("tipoPersonal"));
         objBnSentencias.setTipoCambio(Utiles.Utiles.checkDouble(request.getParameter("tipoCambio")));
         objDsSentencias = new SentenciasDAOImpl(objConnection);
         // DE ACUERO AL MODO, OBTENEMOS LOS DATOS NECESARIOS.  
@@ -188,6 +189,10 @@ public class SentenciasMovimientoServlet extends HttpServlet {
                         sb.append("<i class=\"material-icons\">cloud_upload</i>").append("</button> ");
                         sb.append("<button type=\"button\" class=\"btn bg-navy btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Importat Datos de TXT\" onclick=\"javascript: fn_ImportarTXT();\">");
                         sb.append("<i class=\"material-icons\">attachment </i>").append("</button>");
+                        break;
+                    case 3:
+                        sb.append("<button type=\"button\" class=\"btn bg-brown btn-xs waves-effect\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"Transferir DATA a OEE\" onclick=\"javascript: fn_TransferirData();\">");
+                        sb.append("<i class=\"material-icons\">settings</i>").append("</button> ");
                         break;
                     default:
                         break;

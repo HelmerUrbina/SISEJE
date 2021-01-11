@@ -107,7 +107,8 @@ public class SentenciasDAOImpl implements SentenciasDAO {
         lista = new LinkedList<>();
         sql = "SELECT NRESOLUCION_CODIGO AS RESOLUCION, "
                 + "NVL(UTIL.FUN_MESA_PARTE_DOCUMENTO(CPERIODO_CODIGO, CMESA_PARTES_TIPO, NMESA_PARTES_CORRELATIVO),'SIN DOCUMENTO') AS MESA_PARTES, "
-                + "VRESOLUCION_NUMERO AS NUMERO_RESOLUCION, VRESOLUCION_EXPEDIENTE AS EXPEDIENTE, DRESOLUCION_FECHA_EXPEDIENTE AS FECHA, "
+                + "VRESOLUCION_NUMERO AS NUMERO_RESOLUCION, VRESOLUCION_EXPEDIENTE AS EXPEDIENTE, "
+                + "DRESOLUCION_FECHA_EXPEDIENTE AS FECHA_EXPEDIENTE, DUSUARIO_CREADOR AS FECHA_REGISTRO, "
                 + "CASE WHEN NTIPO_PAGO_CODIGO IN (1,2,5) THEN TO_CHAR(NRESOLUCION_PORCENTAJE,'FM999,999,999,999.009')||' %' "
                 + "WHEN NTIPO_PAGO_CODIGO IN (3,4) THEN UTIL.FUN_ABREVIATURA_TIPO_PAGO(NTIPO_PAGO_CODIGO)||' S/ '|| TO_CHAR(NVL(NRESOLUCION_MONTO,0),'FM999,999,999,999.009')  ELSE "
                 + "' ' END AS FORMA_PAGO, NTIPO_PAGO_CODIGO, UTIL.FUN_DESCRIPCION_ESTADO(CESTADO_CODIGO) AS ESTADO "
@@ -126,7 +127,8 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setExpediente(objResultSet.getString("EXPEDIENTE"));
                 objBnSentencias.setGrado(objResultSet.getString("FORMA_PAGO"));
                 objBnSentencias.setTipoPago(objResultSet.getString("NTIPO_PAGO_CODIGO"));
-                objBnSentencias.setFecha(objResultSet.getDate("FECHA"));
+                objBnSentencias.setFecha(objResultSet.getDate("FECHA_EXPEDIENTE"));
+                objBnSentencias.setFechaIngreso(objResultSet.getDate("FECHA_REGISTRO"));
                 objBnSentencias.setSituacion(objResultSet.getString("ESTADO"));
                 lista.add(objBnSentencias);
             }
@@ -239,11 +241,22 @@ public class SentenciasDAOImpl implements SentenciasDAO {
         lista = new LinkedList<>();
         sql = "SELECT 1 AS NUMERO, CASE WHEN COUNT(*)=0 THEN 'DESCUENTOS SIN PROCESAR' ELSE 'DESCUENTOS PROCESADOS' END AS DESCRIPCION "
                 + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE "
-                + "CPERIODO_CODIGO='" + objBeanSentencias.getPeriodo() + "' AND CMES_CODIGO='" + objBeanSentencias.getMes() + "' AND TO_NUMBER(CSENTENCIA_TIPO)='" + Utiles.Utiles.checkNum(objBeanSentencias.getTipo()) + "' "
+                + "CPERIODO_CODIGO='" + objBeanSentencias.getPeriodo() + "' AND "
+                + "CMES_CODIGO='" + objBeanSentencias.getMes() + "' AND "
+                + "TO_NUMBER(CSENTENCIA_TIPO)='" + Utiles.Utiles.checkNum(objBeanSentencias.getTipo()) + "' AND "
+                + "NSITUACION_TIPO='" + objBeanSentencias.getTipoPersonal() + "' "
                 + "UNION ALL "
-                + "SELECT 2 AS NUMERO, CASE WHEN NVL(SUM(NRESOLUCION_MOVIMIENTO_PAGO),0)=0 THEN 'DESCUENTOS SIN AFECTAR' ELSE 'DESCUENTOS AFECTADOS' END AS DESCRIPCION "
-                + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE "
-                + "CPERIODO_CODIGO='" + objBeanSentencias.getPeriodo() + "' AND CMES_CODIGO='" + objBeanSentencias.getMes() + "' AND TO_NUMBER(CSENTENCIA_TIPO)='" + Utiles.Utiles.checkNum(objBeanSentencias.getTipo()) + "' ";
+                + "SELECT 2 AS NUMERO, CASE WHEN NVL(SUM(IMPORTE),0)=0 THEN 'DESCUENTOS SIN AFECTAR' ELSE 'DESCUENTOS AFECTADOS' END AS DESCRIPCION "
+                + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
+                + "CPERIODO_CODIGO='" + objBeanSentencias.getPeriodo() + "' AND CMES_CODIGO='" + objBeanSentencias.getMes() + "' AND "
+                + "TO_NUMBER(CSENTENCIA_TIPO)='" + Utiles.Utiles.checkNum(objBeanSentencias.getTipo()) + "' AND "
+                + "NSITUACION_TIPO='" + objBeanSentencias.getTipoPersonal() + "' "
+                + "UNION ALL "
+                + "SELECT 3 AS NUMERO, CASE WHEN COUNT(*)=0 THEN 'SIN TRANSFERIR A OEE' ELSE 'DATA TRANSFERIDA A OEE' END AS DESCRIPCION "
+                + "FROM SISEJE_RESOLUCIONES_OEE  WHERE "
+                + "CPERIODO_CODIGO='" + objBeanSentencias.getPeriodo() + "' AND CMES_CODIGO='" + objBeanSentencias.getMes() + "' AND "
+                + "TO_NUMBER(CSENTENCIA_TIPO)='" + Utiles.Utiles.checkNum(objBeanSentencias.getTipo()) + "' AND "
+                + "NSITUACION_TIPO='" + objBeanSentencias.getTipoPersonal() + "' ";
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
             objResultSet = objPreparedStatement.executeQuery();
@@ -259,6 +272,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             try {
                 if (objResultSet != null) {
                     objResultSet.close();
+                    objPreparedStatement.close();
                 }
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -270,33 +284,20 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     @Override
     public List getListaResolucionesProceso(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
-        sql = "SELECT MOV.CPERIODO_CODIGO, MOV.CMES_CODIGO, "
-                + "CASE MOV.CSENTENCIA_TIPO WHEN '02' THEN '8089' WHEN '03' THEN '9310' ELSE '0000' END AS CRESOLUCION_PROCESO_DESCUENTO, "
-                + "MOV.CTIPO_REMUNERACION_CODIGO, MOV.CPERSONAL_CIP, "
-                + "SUM(CASE WHEN MOV.NTIPO_PAGO_CODIGO IN (1,2,5) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS PORCENTAJE, "
-                + "SUM(CASE WHEN MOV.NTIPO_PAGO_CODIGO IN (3,4) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS MONTO, "
-                + "MOV.NSENTENCIA_CODIGO||'-'||MOV.NRESOLUCION_CODIGO AS IDENTIFICADOR "
-                + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO MOV INNER JOIN SISEJE_RESOLUCIONES RESOL ON (RESOL.CPERSONAL_CIP=MOV.CPERSONAL_CIP AND "
-                + "RESOL.NSENTENCIA_CODIGO=MOV.NSENTENCIA_CODIGO AND RESOL.NRESOLUCION_CODIGO=MOV.NRESOLUCION_CODIGO) WHERE  "
-                + "MOV.CPERIODO_CODIGO=? AND "
-                + "MOV.CMES_CODIGO=? AND "
-                + "MOV.CSENTENCIA_TIPO=?  AND "
-                + "NRESOLUCION_MOVIMIENTO_MONTO>0 "
-                + "GROUP BY MOV.CPERIODO_CODIGO, MOV.CMES_CODIGO, MOV.CSENTENCIA_TIPO, "
-                + "MOV.CPERSONAL_CIP,MOV.NSENTENCIA_CODIGO,MOV.NRESOLUCION_CODIGO, MOV.CTIPO_REMUNERACION_CODIGO "
-                + "ORDER BY MOV.CPERSONAL_CIP,MOV.NSENTENCIA_CODIGO,MOV.NRESOLUCION_CODIGO, MOV.CTIPO_REMUNERACION_CODIGO";
-        /*sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CTIPO_REMUNERACION_CODIGO, "
-                + "CRESOLUCION_PROCESO_DESCUENTO, "
-                + "CPERSONAL_CIP, SUM(NRESOLUCION_PROCESO_PORCENTAJE) AS PORCENTAJE, "
-                + "SUM(NRESOLUCION_PROCESO_MONTO) AS MONTO "
-                + "FROM SISEJE_RESOLUCIONES_PROCESO WHERE "
+        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, "
+                + "CASE CSENTENCIA_TIPO WHEN '02' THEN '8089' WHEN '03' THEN '9310' ELSE '0000' END AS CRESOLUCION_PROCESO_DESCUENTO, "
+                + "CTIPO_REMUNERACION_CODIGO, CPERSONAL_CIP, "
+                + "SUM(CASE WHEN NTIPO_PAGO_CODIGO IN (1,2,5) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS PORCENTAJE, "
+                + "SUM(CASE WHEN NTIPO_PAGO_CODIGO IN (3,4) THEN NVL(NRESOLUCION_MOVIMIENTO_MONTO,0) ELSE 0 END) AS MONTO, "
+                + "NSENTENCIA_CODIGO||'-'||NRESOLUCION_CODIGO AS IDENTIFICADOR "
+                + "FROM SISEJE_RESOLUCIONES_MOVIMIENTO WHERE  "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
-                + "CSENTENCIA_TIPO=? "
-                + "GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CRESOLUCION_PROCESO_DESCUENTO, "
-                + "CPERSONAL_CIP, CTIPO_REMUNERACION_CODIGO "
-                + "ORDER BY CRESOLUCION_PROCESO_DESCUENTO, CPERSONAL_CIP, CTIPO_REMUNERACION_CODIGO";
-         */
+                + "CSENTENCIA_TIPO=? AND "
+                + "NRESOLUCION_MOVIMIENTO_MONTO>0 "
+                + "GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, "
+                + "CPERSONAL_CIP, NSENTENCIA_CODIGO, NRESOLUCION_CODIGO, CTIPO_REMUNERACION_CODIGO "
+                + "ORDER BY CPERSONAL_CIP, NSENTENCIA_CODIGO, NRESOLUCION_CODIGO, CTIPO_REMUNERACION_CODIGO";
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
             objPreparedStatement.setString(1, objBeanSentencias.getPeriodo());
@@ -321,6 +322,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             try {
                 if (objResultSet != null) {
                     objResultSet.close();
+                    objPreparedStatement.close();
                 }
             } catch (SQLException e) {
                 System.out.println(e.getMessage());
@@ -332,50 +334,36 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     @Override
     public List getListaResolucionesMovimientoValidacion(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
-        /*sql="SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO,   PLANILLA_MCPP, \n" +
-"                COD_ADM, NOMBRE, DNI_DEMANDADO, DESC_CORTA, \n" +
-"                TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, \n" +
-"                SUM(IMPORTE) IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION \n" +
-"                FROM V_RESOLUCION_MOVIMIENTO WHERE \n" +
-"                CPERIODO_CODIGO='2020' AND \n" +
-"                CMES_CODIGO='08' AND \n" +
-"                CSENTENCIA_TIPO='03' \n" +
-"                GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO,   PLANILLA_MCPP, \n" +
-"                COD_ADM, NOMBRE, DNI_DEMANDADO, DESC_CORTA, \n" +
-"                TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, \n" +
-"                MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION\n" +
-"                ORDER BY COD_ADM, DNI_DEMAN";
-        */
-        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, SENTENCIA, RESOLUCION, PLANILLA_MCPP, "
-                + "NUMERO, COD_ADM, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
-                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, COD_BANCO, BANCO, "
-                + "IMPORTE, MES, SITUACION, COD_DISTRIBUCION, DISTRIBUCION "
+        sql = "SELECT CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, TIPO, SITUACION, COD_ADM, "
+                + "CASE CRESOLUCION_BENEFICIARIO_TIPO WHEN '2' THEN NULL ELSE DNI_DEMAN END AS DNI_DEMAN, "
+                + "CTANUMERO, "
+                + "CASE CRESOLUCION_BENEFICIARIO_TIPO WHEN '2' THEN MAX(JUZGADO) ELSE MAX(BENEFICIARIO) END AS BENEFICIARIO, "
+                + "TIPO_PAGO, SUBSTR(COD_BANCO,2) COD_BANCO, BANCO, SUM(IMPORTE) IMPORTE, "
+                + "CPLANILLA_CODIGO, PLANILLA_DESCRIPCION, PLANILLA_MCPP "
                 + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
-                + "CSENTENCIA_TIPO=? "
-                + "ORDER BY COD_ADM, DNI_DEMAN";
+                + "CSENTENCIA_TIPO=? AND "
+                + "NSITUACION_TIPO=? "
+                + "GROUP BY CPERIODO_CODIGO, CMES_CODIGO, CSENTENCIA_TIPO, TIPO, SITUACION, COD_ADM,  "
+                + "CTANUMERO, TIPO_PAGO, COD_BANCO, BANCO, CRESOLUCION_BENEFICIARIO_TIPO, "
+                + "CPLANILLA_CODIGO, PLANILLA_DESCRIPCION, PLANILLA_MCPP, DNI_DEMAN "
+                + "ORDER BY TIPO_PAGO, CPLANILLA_CODIGO, PLANILLA_MCPP, COD_ADM, DNI_DEMAN";
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
             objPreparedStatement.setString(1, objBeanSentencias.getPeriodo());
             objPreparedStatement.setString(2, objBeanSentencias.getMes());
             objPreparedStatement.setString(3, objBeanSentencias.getTipo());
+            objPreparedStatement.setString(4, objBeanSentencias.getPersonal());
             objResultSet = objPreparedStatement.executeQuery();
             while (objResultSet.next()) {
                 objBnSentencias = new BeanSentencias();
                 objBnSentencias.setPeriodo(objResultSet.getString("CPERIODO_CODIGO"));
                 objBnSentencias.setMes(objResultSet.getString("CMES_CODIGO"));
                 objBnSentencias.setArma(objResultSet.getString("CSENTENCIA_TIPO"));
-                objBnSentencias.setSentencia(objResultSet.getInt("SENTENCIA"));
-                objBnSentencias.setResolucion(objResultSet.getInt("RESOLUCION"));
-                objBnSentencias.setCuotas(objResultSet.getInt("PLANILLA_MCPP"));
-                objBnSentencias.setUnidad(objResultSet.getString("NUMERO"));
-                objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
-                objBnSentencias.setPersonal(objResultSet.getString("NOMBRE"));
-                objBnSentencias.setJuez(objResultSet.getString("DNI_DEMANDADO"));
-                objBnSentencias.setJuzgado(objResultSet.getString("RAZON_SOCIAL"));
-                objBnSentencias.setTipoRemuneracion(objResultSet.getString("DESC_CORTA"));
                 objBnSentencias.setTipo(objResultSet.getString("TIPO"));
+                objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
+                objBnSentencias.setCIP(objResultSet.getString("COD_ADM"));
                 objBnSentencias.setExpediente(objResultSet.getString("DNI_DEMAN"));
                 objBnSentencias.setNumeroResolucion(objResultSet.getString("CTANUMERO"));
                 objBnSentencias.setBeneficiario(objResultSet.getString("BENEFICIARIO"));
@@ -383,9 +371,9 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBnSentencias.setOficio(objResultSet.getString("COD_BANCO"));
                 objBnSentencias.setBanco(objResultSet.getString("BANCO"));
                 objBnSentencias.setMonto(objResultSet.getDouble("IMPORTE"));
-                objBnSentencias.setSituacion(objResultSet.getString("SITUACION"));
-                objBnSentencias.setMesaPartes(objResultSet.getString("COD_DISTRIBUCION"));
-                objBnSentencias.setGrado(objResultSet.getString("DISTRIBUCION"));
+                objBnSentencias.setMesaPartes(objResultSet.getString("CPLANILLA_CODIGO"));
+                objBnSentencias.setGrado(objResultSet.getString("PLANILLA_DESCRIPCION"));
+                objBnSentencias.setCuotas(objResultSet.getInt("PLANILLA_MCPP"));
                 lista.add(objBnSentencias);
             }
         } catch (SQLException e) {
@@ -407,13 +395,15 @@ public class SentenciasDAOImpl implements SentenciasDAO {
     public List getListaResolucionesPlanillaMCPP(BeanSentencias objBeanSentencias) {
         lista = new LinkedList<>();
         sql = "SELECT COD_ADM, SENTENCIA, RESOLUCION, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
-                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, IMPORTE, MES, SITUACION, DISTRIBUCION "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, SUM(IMPORTE), MES, SITUACION, DISTRIBUCION "
                 + "FROM V_RESOLUCION_MOVIMIENTO WHERE "
                 + "CPERIODO_CODIGO=? AND "
                 + "CMES_CODIGO=? AND "
                 + "CSENTENCIA_TIPO=?  AND "
                 + "COD_DISTRIBUCION=? AND "
                 + "PLANILLA_MCPP=? "
+                + "GROUP BY COD_ADM, SENTENCIA, RESOLUCION, NOMBRE, DNI_DEMANDADO, RAZON_SOCIAL, DESC_CORTA, "
+                + "TIPO, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, MES, SITUACION, DISTRIBUCION "
                 + "ORDER BY COD_ADM, DNI_DEMAN";
         try {
             objPreparedStatement = objConnection.prepareStatement(sql);
@@ -523,7 +513,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
         sql = "SELECT CPERIODO_CODIGO, NMESA_PARTES_CORRELATIVO||'-'||NMESA_PARTES_DECRETO AS CORRELATIVO, "
                 + "NMESA_PARTES_CORRELATIVO||'-'||NMESA_PARTES_DECRETO||':'||UTIL.FUN_MESA_PARTE_DOCUMENTO(CPERIODO_CODIGO, CMESA_PARTES_TIPO, NMESA_PARTES_CORRELATIVO) AS MESA_PARTES,  "
                 + "VRESOLUCION_NUMERO, VRESOLUCION_EXPEDIENTE, DRESOLUCION_FECHA_EXPEDIENTE, VRESOLUCION_OFICIO, DRESOLUCION_FECHA_OFICIO, "
-                + "VRESOLUCION_JUEZ, NJUZGADO_CODIGO "
+                + "VRESOLUCION_JUEZ, NJUZGADO_CODIGO, CDEPARTAMENTO_CODIGO, CLUGAR_CODIGO, UTIL.FUN_LUGAR(CLUGAR_CODIGO) AS LUGAR "
                 + "FROM SISEJE_RESOLUCIONES WHERE "
                 + "CPERSONAL_CIP='" + objBeanSentencias.getCIP() + "' AND "
                 + "NSENTENCIA_CODIGO='" + objBeanSentencias.getSentencia() + "' AND "
@@ -542,6 +532,9 @@ public class SentenciasDAOImpl implements SentenciasDAO {
                 objBeanSentencias.setFechaFin(objResultSet.getDate("DRESOLUCION_FECHA_OFICIO"));
                 objBeanSentencias.setJuez(objResultSet.getString("VRESOLUCION_JUEZ"));
                 objBeanSentencias.setJuzgado(objResultSet.getString("NJUZGADO_CODIGO"));
+                objBeanSentencias.setDepartamento(objResultSet.getString("CDEPARTAMENTO_CODIGO"));
+                objBeanSentencias.setLugar(objResultSet.getString("CLUGAR_CODIGO"));
+                objBeanSentencias.setTipoPago(objResultSet.getString("LUGAR"));
             }
         } catch (SQLException e) {
             System.out.println("Error al obtener getResoluciones(objBeanSentencias) : " + e.getMessage());
@@ -715,6 +708,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setString(6, usuario);
             cs.setString(7, objBeanSentencias.getMode());
             s = cs.executeUpdate();
+            cs.close();
         } catch (SQLException e) {
             System.out.println("Error al ejecutar iduSentencias : " + e.getMessage());
             return 0;
@@ -724,7 +718,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
 
     @Override
     public int iduResoluciones(BeanSentencias objBeanSentencias, String usuario) {
-        sql = "{CALL SP_IDU_RESOLUCIONES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+        sql = "{CALL SP_IDU_RESOLUCIONES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
         try (CallableStatement cs = objConnection.prepareCall(sql)) {
             cs.setString(1, objBeanSentencias.getCIP());
             cs.setString(2, objBeanSentencias.getTipo());
@@ -739,9 +733,12 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setDate(11, objBeanSentencias.getFechaFin());
             cs.setString(12, objBeanSentencias.getJuez());
             cs.setString(13, objBeanSentencias.getJuzgado());
-            cs.setString(14, usuario);
-            cs.setString(15, objBeanSentencias.getMode());
+            cs.setString(14, objBeanSentencias.getDepartamento());
+            cs.setString(15, objBeanSentencias.getLugar());
+            cs.setString(16, usuario);
+            cs.setString(17, objBeanSentencias.getMode());
             s = cs.executeUpdate();
+            cs.close();
         } catch (SQLException e) {
             System.out.println("Error al ejecutar iduResoluciones : " + e.getMessage());
             return 0;
@@ -772,6 +769,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setString(17, usuario);
             cs.setString(18, objBeanSentencias.getMode());
             s = cs.executeUpdate();
+            cs.close();
         } catch (SQLException e) {
             System.out.println("Error al ejecutar iduResolucionesBeneficiario : " + e.getMessage());
             return 0;
@@ -797,6 +795,7 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setDouble(12, objBeanSentencias.getMonto());
             cs.setString(13, usuario);
             s = cs.executeUpdate();
+            cs.close();
         } catch (SQLException e) {
             System.out.println("Error al ejecutar iduResolucionesDetalle : " + e.getMessage());
             return 0;
@@ -814,33 +813,12 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             cs.setString(4, usuario);
             cs.setString(5, objBeanSentencias.getMode());
             s = cs.executeUpdate();
+            cs.close();
         } catch (SQLException e) {
             System.out.println("Error al ejecutar iduCerrarResoluciones : " + e.getMessage());
             return 0;
         }
         return s;
-    }
-
-    @Override
-    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario) {
-        sql = "{CALL SP_IDU_RESOLUCIONES_PLANILLA(?,?,?,?,?,?,?,?,?)}";
-        try (CallableStatement cs = objConnection.prepareCall(sql)) {
-            cs.setString(1, objBeanSentencias.getPeriodo());
-            cs.setString(2, objBeanSentencias.getMes());
-            cs.setString(3, objBeanSentencias.getCIP());
-            cs.setString(4, objBeanSentencias.getTipo());
-            cs.setInt(5, objBeanSentencias.getSentencia());
-            cs.setInt(6, objBeanSentencias.getResolucion());
-            cs.setString(7, objBeanSentencias.getTipoRemuneracion());
-            cs.setInt(8, objBeanSentencias.getCuotas());
-            cs.setString(9, usuario);
-            s = cs.executeUpdate();
-            cs.close();
-        } catch (SQLException e) {
-            System.out.println("Error al ejecutar iduResolucionesPlanilla : " + e.getMessage());
-            return e.getMessage();
-        }
-        return "GUARDO";
     }
 
     @Override
@@ -901,5 +879,53 @@ public class SentenciasDAOImpl implements SentenciasDAO {
             return e.getMessage();
         }
         return null;
+    }
+
+    @Override
+    public String iduResolucionesPlanillaArchivo(BeanSentencias objBeanSentencias, String usuario) {
+        sql = "{CALL SP_IDU_RESOLUCIONES_PLAN_ARCHI(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+        try (CallableStatement cs = objConnection.prepareCall(sql)) {
+            cs.setString(1, objBeanSentencias.getPeriodo());
+            cs.setString(2, objBeanSentencias.getMes());
+            cs.setString(3, objBeanSentencias.getTipo());
+            cs.setString(4, objBeanSentencias.getArma());
+            cs.setString(5, objBeanSentencias.getSituacion());
+            cs.setString(6, objBeanSentencias.getCIP());
+            cs.setString(7, objBeanSentencias.getExpediente());
+            cs.setString(8, objBeanSentencias.getNumeroResolucion());
+            cs.setString(9, objBeanSentencias.getBeneficiario());
+            cs.setString(10, objBeanSentencias.getTipoPago());
+            cs.setString(11, objBeanSentencias.getBanco());
+            cs.setString(12, objBeanSentencias.getOficio());
+            cs.setString(13, objBeanSentencias.getMesaPartes());
+            cs.setString(14, objBeanSentencias.getGrado());
+            cs.setDouble(15, objBeanSentencias.getMonto());
+            cs.setInt(16, objBeanSentencias.getCuotas());
+            cs.setString(17, usuario);
+            cs.setString(18, objBeanSentencias.getMode());
+            s = cs.executeUpdate();
+            cs.close();
+        } catch (SQLException e) {
+            System.out.println("Error al ejecutar iduResolucionesPlanillaArchivo : " + e.getMessage());
+            return e.getMessage();
+        }
+        return "GUARDO";
+    }
+
+    @Override
+    public String iduResolucionesPlanilla(BeanSentencias objBeanSentencias, String usuario) {
+        sql = "{CALL SP_IDU_RESOLUCIONES_PLANILLA(?,?,?,?)}";
+        try (CallableStatement cs = objConnection.prepareCall(sql)) {
+            cs.setString(1, objBeanSentencias.getPeriodo());
+            cs.setString(2, objBeanSentencias.getMes());
+            cs.setString(3, objBeanSentencias.getTipo());
+            cs.setString(4, usuario);
+            s = cs.executeUpdate();
+            cs.close();
+        } catch (SQLException e) {
+            System.out.println("Error al ejecutar iduResolucionesPlanilla : " + e.getMessage());
+            return e.getMessage();
+        }
+        return "GUARDO";
     }
 }

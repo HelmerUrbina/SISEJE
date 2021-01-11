@@ -80,6 +80,8 @@ public class IduMesaPartesServlet extends HttpServlet {
         objBnMesaPartes.setFechaDocumento(new java.sql.Date(fecha_doc.getTime()));
         objBnMesaPartes.setPrioridad(request.getParameter("prioridad"));
         objBnMesaPartes.setFolios(Utiles.checkNum(request.getParameter("folios")));
+        objBnMesaPartes.setTipoJuzgado(request.getParameter("tipoJuzgado"));
+        objBnMesaPartes.setDepartamento(request.getParameter("departamento"));
         objBnMesaPartes.setJuzgado(request.getParameter("juzgado"));
         objBnMesaPartes.setPostFirma(request.getParameter("firma"));
         objBnMesaPartes.setArchivo(request.getParameter("archivo"));
@@ -89,7 +91,7 @@ public class IduMesaPartesServlet extends HttpServlet {
             for (Part part : parts) {
                 if (null != Utiles.getFileName(part)) {
                     objBnMesaPartes.setArchivo(Utiles.getFileName(part));
-                    part.write(objBnMesaPartes.getPeriodo() + "-" + objBnMesaPartes.getTipo() + "-" + Utiles.checkNum(objBnMesaPartes.getNumero()) + "-" + objBnMesaPartes.getArchivo());
+                    part.write(objBnMesaPartes.getPeriodo() + "-" + objBnMesaPartes.getTipo() + "-" + Utiles.checkNum(objBnMesaPartes.getCodigo()) + "-" + objBnMesaPartes.getArchivo());
                 }
             }
         }

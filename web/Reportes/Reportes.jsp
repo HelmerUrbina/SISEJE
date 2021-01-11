@@ -8,7 +8,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <title>Sistema de Sentencias Judidiciales del Ejercito</title>
-        <link rel="icon" href="favicon.ico" type="image/x-icon">        
+        <link rel="icon" href="favicon.ico" type="image/x-icon">
         <!-- Fuentes de Google -->
         <link href="css/cyrillic-ext.css" rel="stylesheet" type="text/css"/>
         <link href="css/fallback.css" rel="stylesheet" type="text/css"/>
@@ -82,10 +82,51 @@
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
                 var codigo = $('#cbo_Conceptos').val();
-                var codigo2= $('#cbo_TipoPersonal').val();
+                var codigo2 = $('#cbo_TipoPersonal').val();
                 var reporte = $('input:radio[name=reporte]:checked').val();
-                var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + codigo+ '&codigo2='+ codigo2;
-                window.open(url, '_blank');
+                if (reporte === 'RESO0007') {
+                    var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val();
+                    window.open(url, '_blank');
+                } else if (reporte === 'RESO0008') {
+                    var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0009&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0021&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0010&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0011&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                } else if (reporte === 'RESO0009') {
+                    var url = 'Reportes?reporte=RESO0014&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0012&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                } else if (reporte === 'RESO0010') {
+                    var url = 'Reportes?reporte=RESO0014&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0013&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                } else if (reporte === 'RESO0011') {
+                    var url = 'Reportes?reporte=RESO0016&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0015&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val();
+                    window.open(url, '_blank');
+                } else if (reporte === 'RESO0012') {
+                    var url = 'Reportes?reporte=RESO0017&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0018&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_PlanillaMCPP').val();
+                    window.open(url, '_blank');
+                }else if (reporte === 'RESO0013') {
+                    var url = 'Reportes?reporte=RESO0020&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                    var url = 'Reportes?reporte=RESO0019&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + $('#cbo_TipoPersonal').val() + '&codigo2=' + $('#cbo_Planilla').val();
+                    window.open(url, '_blank');
+                } else {
+                    var url = 'Reportes?reporte=' + reporte + '&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&codigo=' + codigo + '&codigo2=' + codigo2;
+                    window.open(url, '_blank');
+                }
             }
             function fn_cargarConceptos() {
                 var periodo = $('#cbo_Periodo').val();
@@ -100,6 +141,41 @@
                         $('#cbo_Conceptos').append('<option value="00">TODOS</option>');
                         $('#cbo_Conceptos').append(data);
                         $('#cbo_Conceptos').selectpicker('refresh');
+                    }
+                });
+            }
+            function fn_cargarPlanilla() {
+                var periodo = $('#cbo_Periodo').val();
+                var mes = $('#cbo_Mes').val();
+                var tipo = $('#cbo_Tipo').val();
+                var tipoPersonal = $('#cbo_TipoPersonal').val();
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'TIPO_PERSONAL_PLANILLA', periodo: periodo, mes: mes, tipo: tipo, tipoPersonal: tipoPersonal},
+                    success: function (data) {
+                        $('#cbo_Planilla').empty();
+                        //$('#cbo_Planilla').append('<option value="0">Se</option>');
+                        $('#cbo_Planilla').append(data);
+                        $('#cbo_Planilla').selectpicker('refresh');
+                        fn_cargarPlanillaMCPP();
+                    }
+                });
+            }
+            function fn_cargarPlanillaMCPP() {
+                var periodo = $('#cbo_Periodo').val();
+                var mes = $('#cbo_Mes').val();
+                var tipo = $('#cbo_Tipo').val();
+                var tipoPersonal = $('#cbo_TipoPersonal').val();
+                $.ajax({
+                    type: "GET",
+                    url: "Combos",
+                    data: {accion: 'TIPO_PERSONAL_PLANILLA_MCPP', periodo: periodo, mes: mes, tipo: tipo, tipoPersonal: tipoPersonal},
+                    success: function (data) {
+                        $('#cbo_PlanillaMCPP').empty();
+                        //$('#cbo_Planilla').append('<option value="0">Se</option>');
+                        $('#cbo_PlanillaMCPP').append(data);
+                        $('#cbo_PlanillaMCPP').selectpicker('refresh');
                     }
                 });
             }
@@ -163,7 +239,7 @@
                                 </div>
                                 <div class="row clearfix">
                                     <div class="col-sm-1 form-control-label">
-                                        <label for="Periodo">Concepto</label>
+                                        <label for="Concepto">Concepto</label>
                                     </div>
                                     <div class="col-sm-3">
                                         <select id="cbo_Conceptos" class="form-control">
@@ -171,13 +247,31 @@
                                         </select>
                                     </div>
                                     <div class="col-sm-1 form-control-label">
-                                        <label for="Periodo">Personal</label>
+                                        <label for="Personal">Personal</label>
                                     </div>
                                     <div class="col-sm-3">
-                                        <select id="cbo_TipoPersonal" class="form-control">
+                                        <select id="cbo_TipoPersonal" class="form-control" onchange="javascript: fn_cargarPlanilla();">
                                             <option value="0">Seleccione</option>
                                             <option value="1">Actividad</option>
                                             <option value="2">Pensionista</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-1 form-control-label">
+                                        <label for="Planilla">Planilla</label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select id="cbo_Planilla" class="form-control">
+                                            <option value="0">Seleccione</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-1 form-control-label">
+                                        <label for="PlanillaMCPP">MCPP</label>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <select id="cbo_PlanillaMCPP" class="form-control">
+                                            <option value="0">Seleccione</option>
                                         </select>
                                     </div>
                                 </div>
@@ -224,6 +318,34 @@
                                                                     <button type="button" class="list-group-item">
                                                                         <input name="reporte" type="radio" id="RESO0006" class="with-gap" value="RESO0006"/>
                                                                         <label for="RESO0006">Relación por Banco</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0007" class="with-gap" value="RESO0007"/>
+                                                                        <label for="RESO0007">Cuadro de Descuento - Pensionista</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0008" class="with-gap" value="RESO0008"/>
+                                                                        <label for="RESO0008">Cuadro de Descuento (Detallado - Pensionista)</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0013" class="with-gap" value="RESO0013"/>
+                                                                        <label for="RESO0013">Cuadro de Beneficiario - Pensionista</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0009" class="with-gap" value="RESO0009"/>
+                                                                        <label for="RESO0009">Cuadro por Cuentas - Actividad</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0010" class="with-gap" value="RESO0010"/>
+                                                                        <label for="RESO0010">Cuadro por Telegiro - Actividad</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0011" class="with-gap" value="RESO0011"/>
+                                                                        <label for="RESO0011">Cuadro por Juzgado - Actividad</label>
+                                                                    </button>
+                                                                    <button type="button" class="list-group-item">
+                                                                        <input name="reporte" type="radio" id="RESO0012" class="with-gap" value="RESO0012"/>
+                                                                        <label for="RESO0012">Cuadro Responsabilidad - Actividad</label>
                                                                     </button>
                                                                 </div>
                                                             </div>

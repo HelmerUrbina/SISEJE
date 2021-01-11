@@ -75,10 +75,14 @@ public class MesaPartesServlet extends HttpServlet {
                 request.removeAttribute("objTipoDocumento");
             }
             request.setAttribute("objTipoDocumento", objDsCombo.getTipoDocumentos());
-            if (request.getAttribute("objJuzgados") != null) {
-                request.removeAttribute("objJuzgados");
+            if (request.getAttribute("objTipoJuzgados") != null) {
+                request.removeAttribute("objTipoJuzgados");
             }
-            request.setAttribute("objJuzgados", objDsCombo.getJuzgados());
+            request.setAttribute("objTipoJuzgados", objDsCombo.getTipoJuzgados());
+            if (request.getAttribute("objDepartamento") != null) {
+                request.removeAttribute("objDepartamento");
+            }
+            request.setAttribute("objDepartamento", objDsCombo.getDepartamentos());
         }
         if (objBnMesaPartes.getMode().equals("B")) {
             result = "" + TablaResultados(objDsMesaPartes.getListaMesaPartes(objBnMesaPartes));
@@ -100,7 +104,10 @@ public class MesaPartesServlet extends HttpServlet {
                     + objBnMesaPartes.getFechaDocumento() + "+++"
                     + objBnMesaPartes.getPrioridad() + "+++"
                     + objBnMesaPartes.getFolios() + "+++"
+                    + objBnMesaPartes.getTipoJuzgado()+ "+++"
+                    + objBnMesaPartes.getDepartamento()+ "+++"
                     + objBnMesaPartes.getJuzgado() + "+++"
+                    + objBnMesaPartes.getUsuarioResponsable()+ "+++"
                     + objBnMesaPartes.getPostFirma() + "+++"
                     + objBnMesaPartes.getArchivo();
         }

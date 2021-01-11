@@ -2,16 +2,16 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="RESO0004" pageWidth="595" pageHeight="842" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="20" bottomMargin="20" uuid="3a88e084-b8ec-4bcd-a0e1-bf2b9863859c">
 	<property name="ireport.zoom" value="1.6105100000000028"/>
 	<property name="ireport.x" value="206"/>
-	<property name="ireport.y" value="96"/>
+	<property name="ireport.y" value="65"/>
 	<subDataset name="dataset1" uuid="d8215edf-6019-4baf-ba42-a9f9ee9d73e8"/>
 	<parameter name="PERIODO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["2020"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="MES" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["08"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["11"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="CODIGO" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["%"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["1"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="USUARIO" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["AdminSISEJE"]]></defaultValueExpression>
@@ -31,8 +31,7 @@ COD_DISTRIBUCION,
 UTIL.FUN_NOMBRE_USUARIO($P{USUARIO}) AS USUARIO
 FROM V_RESOLUCION_MOVIMIENTO WHERE
 CPERIODO_CODIGO=$P{PERIODO} AND CMES_CODIGO=$P{MES} AND
-CSENTENCIA_TIPO=$P{TIPO} AND COD_DISTRIBUCION LIKE $P{CODIGO} AND
-NSITUACION_TIPO=$P{CODIGO2}
+CSENTENCIA_TIPO=$P{TIPO} AND NSITUACION_TIPO=$P{CODIGO}
 GROUP BY CPERIODO_CODIGO, CMES_CODIGO, TIPO,  
 COD_ADM, NOMBRE, DNI_DEMAN, CTANUMERO, BENEFICIARIO, TIPO_PAGO, BANCO, 
 COD_DISTRIBUCION, DISTRIBUCION, PERSONAL_TIPO

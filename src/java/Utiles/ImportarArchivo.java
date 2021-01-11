@@ -86,15 +86,25 @@ public class ImportarArchivo {
             while (rowIterator.hasNext()) {
                 Row hssfRow = rowIterator.next(); // For each row, iterate through each columns 
                 objBnSentencias.setMode("I");
-                objBnSentencias.setPeriodo(hssfRow.getCell(0).getStringCellValue());
-                objBnSentencias.setMes(hssfRow.getCell(1).getStringCellValue());
-                objBnSentencias.setTipo(hssfRow.getCell(2).getStringCellValue());
-                objBnSentencias.setCIP(hssfRow.getCell(3).getStringCellValue());
-                objBnSentencias.setSentencia((int) (hssfRow.getCell(4).getNumericCellValue()));
-                objBnSentencias.setResolucion((int) (hssfRow.getCell(5).getNumericCellValue()));
-                objBnSentencias.setTipoRemuneracion(hssfRow.getCell(6).getStringCellValue());
-                objBnSentencias.setCuotas((int) (hssfRow.getCell(7).getNumericCellValue()));
-                k = objDsSentencias.iduResolucionesPlanilla(objBnSentencias, usuario);
+                //objBnSentencias.setPeriodo(hssfRow.getCell(0).getStringCellValue());
+                //objBnSentencias.setMes(hssfRow.getCell(1).getStringCellValue());
+                //objBnSentencias.setTipo(hssfRow.getCell(2).getStringCellValue());
+                objBnSentencias.setArma(hssfRow.getCell(3).getStringCellValue());
+                objBnSentencias.setSituacion((hssfRow.getCell(4).getStringCellValue()));
+                objBnSentencias.setCIP(hssfRow.getCell(5).getStringCellValue());
+                objBnSentencias.setExpediente(hssfRow.getCell(6).getStringCellValue());
+                if (!"TELEGIRO".equals(hssfRow.getCell(9).getStringCellValue())) {
+                    objBnSentencias.setNumeroResolucion(hssfRow.getCell(7).getStringCellValue());
+                }
+                objBnSentencias.setBeneficiario(hssfRow.getCell(8).getStringCellValue());
+                objBnSentencias.setTipoPago(hssfRow.getCell(9).getStringCellValue());
+                objBnSentencias.setBanco(hssfRow.getCell(10).getStringCellValue());
+                objBnSentencias.setOficio(hssfRow.getCell(11).getStringCellValue());
+                objBnSentencias.setMesaPartes(hssfRow.getCell(12).getStringCellValue());
+                objBnSentencias.setGrado(hssfRow.getCell(13).getStringCellValue());
+                objBnSentencias.setMonto(hssfRow.getCell(14).getNumericCellValue());
+                objBnSentencias.setCuotas((int) (hssfRow.getCell(15).getNumericCellValue()));
+                k = objDsSentencias.iduResolucionesPlanillaArchivo(objBnSentencias, usuario);
             }
         } catch (FileNotFoundException fileNotFoundException) {
             System.out.println("Error proceso 1" + fileNotFoundException.getMessage());

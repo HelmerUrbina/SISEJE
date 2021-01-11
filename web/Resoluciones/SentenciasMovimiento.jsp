@@ -119,11 +119,12 @@
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
+                var tipoPersonal = $('#cbo_TipoPersonal').val();
                 var $contenidoAjax = $('#TablaResultados').html('<img src="../Imagenes/cargando.gif" height="800" width="500" />');
                 $.ajax({
                     type: "GET",
                     url: "SentenciasMovimiento",
-                    data: {mode: 'G', periodo: periodo, mes: mes, tipo: tipo},
+                    data: {mode: 'G', periodo: periodo, mes: mes, tipo: tipo, tipoPersonal: tipoPersonal},
                     success: function (data) {
                         $contenidoAjax.html(data);
                         $('[data-toggle="tooltip"]').tooltip();
@@ -150,10 +151,11 @@
                     var periodo = $('#cbo_Periodo').val();
                     var mes = $('#cbo_Mes').val();
                     var tipo = $('#cbo_Tipo').val();
+                    var tipoPersonal = $('#cbo_TipoPersonal').val();
                     $.ajax({
                         type: "POST",
                         url: "SentenciasMovimiento",
-                        data: {mode: 'P', periodo: periodo, mes: mes, tipo: tipo, tipoCambio: inputValue},
+                        data: {mode: 'P', periodo: periodo, mes: mes, tipo: tipo, tipoPersonal: tipoPersonal, tipoCambio: inputValue},
                         success: function (data) {
                             if (data === 'GUARDO') {
                                 swal({
@@ -175,14 +177,16 @@
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
-                var url = 'SentenciasMovimiento?mode=E&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo;
+                var tipoPersonal = $('#cbo_TipoPersonal').val();
+                var url = 'SentenciasMovimiento?mode=E&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo+ '&tipoPersonal=' + tipoPersonal;
                 window.open(url, '_blank');
             }
             function fn_ExportarTXT() {
                 var periodo = $('#cbo_Periodo').val();
                 var mes = $('#cbo_Mes').val();
                 var tipo = $('#cbo_Tipo').val();
-                var url = 'SentenciasMovimiento?mode=T&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo;
+                var tipoPersonal = $('#cbo_TipoPersonal').val();
+                var url = 'SentenciasMovimiento?mode=T&periodo=' + periodo + '&mes=' + mes + '&tipo=' + tipo + '&tipoPersonal=' + tipoPersonal;
                 window.open(url, '_blank');
             }
             function fn_ImportarExcel() {
@@ -206,6 +210,7 @@
                     var periodo = $('#cbo_Periodo').val();
                     var mes = $('#cbo_Mes').val();
                     var tipo = $('#cbo_Tipo').val();
+                    var tipoPersonal = $('#cbo_TipoPersonal').val();
                     var archivo = $("#txt_Archivo").val();
                     var tipoCambio = $("#txt_TipoCambio").val();
                     if (archivo !== '') {
@@ -214,6 +219,7 @@
                         formData.append("periodo", periodo);
                         formData.append("mes", mes);
                         formData.append("tipo", tipo);
+                        formData.append("tipoPersonal", tipoPersonal);
                         formData.append("flag", flag);
                         formData.append("tipoCambio", tipoCambio);
                         formData.append("archivo", archivo);
@@ -246,6 +252,9 @@
                         swal("Aviso del Sistema!", msg, "error");
                     }
                 }
+            }
+            function fn_TransferirData() {
+                alert("DESEA PROCESA A OEE");
             }
             function fn_VerificaArchivo() {
                 var regex = /^([a-zA-Z0-9\s_\\.\-:])+(.xlsx|.xls|.txt)$/;
@@ -339,6 +348,18 @@
                                             <i class="material-icons">search</i>
                                             <span>Buscar</span>
                                         </button>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div class="col-sm-1 form-control-label">
+                                        <label for="Personal">Personal</label>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <select id="cbo_TipoPersonal" class="form-control" onchange="javascript: fn_BuscarDatos();">
+                                            <option value="0">Seleccione</option>
+                                            <option value="1">Actividad</option>
+                                            <option value="2">Pensionista</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

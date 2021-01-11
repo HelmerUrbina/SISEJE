@@ -58,15 +58,13 @@ public class ExportarExcel {
         }
     }
 
-    public void GenerarArchivoMovimientos(String nombreArchivo, List objConsulta) {
+    public void GenerarArchivoValidacionPlanilla(String nombreArchivo, List objConsulta) {
         File archivo = new File(nombreArchivo);
         Workbook workbook = new XSSFWorkbook();
         Sheet pagina = workbook.createSheet("Descuentos");
-        String[] titulos = {"Periodo", "Mes", "Tipo", "CIP", "Sentencia", "Resolucion",
-            "Remuneración", "Planilla MCPP", "Area", "Numero", "Cod Adminstrativo", "Nombre",
-            "DNI Demandado", "Juzgado", "Descripcion", "DNI Demandado", "Beneficiario",
-            "Tipo Pago", "Nro Cuenta", "Cod Banco", "Banco", "Importe", "Situacion",
-            "Cod Distribucion", "Desc Distribucion"};
+        String[] titulos = {"PERIODO", "MES", "CSENTENCIA_TIPO", "TIPO", "SITUACION", "CIP", "DNI BENEFICIARIO",
+            "NRO CUENTA", "BENEFICIARIO", "TIPO PAGO", "COD BANCO", "BANCO", "MONTO", "COD PLANILLA",
+            "DESC PLANILLA", "PLANILLA MCPP"};
         Row fila = pagina.createRow(0);
         for (int i = 0; i < titulos.length; i++) {
             Cell celda = fila.createCell(i);
@@ -78,28 +76,19 @@ public class ExportarExcel {
             fila.createCell(0).setCellValue(proceso.getPeriodo());
             fila.createCell(1).setCellValue(proceso.getMes());
             fila.createCell(2).setCellValue(proceso.getArma());
-            fila.createCell(3).setCellValue(proceso.getCIP());
-            fila.createCell(4).setCellValue(proceso.getSentencia());
-            fila.createCell(5).setCellValue(proceso.getResolucion());
-            fila.createCell(6).setCellValue(proceso.getMesaPartes());
-            fila.createCell(7).setCellValue(proceso.getCuotas());
-            fila.createCell(8).setCellValue(proceso.getTipo());
-            fila.createCell(9).setCellValue(proceso.getUnidad());
-            fila.createCell(10).setCellValue(proceso.getCIP());
-            fila.createCell(11).setCellValue(proceso.getPersonal());
-            fila.createCell(12).setCellValue(proceso.getJuez());
-            fila.createCell(13).setCellValue(proceso.getJuzgado());
-            fila.createCell(14).setCellValue(proceso.getTipoRemuneracion());
-            fila.createCell(15).setCellValue(proceso.getExpediente());
-            fila.createCell(16).setCellValue(proceso.getBeneficiario());
-            fila.createCell(17).setCellValue(proceso.getTipoPago());
-            fila.createCell(18).setCellValue(proceso.getNumeroResolucion());
-            fila.createCell(19).setCellValue(proceso.getOficio());
-            fila.createCell(20).setCellValue(proceso.getBanco());
-            fila.createCell(21).setCellValue(proceso.getMonto());
-            fila.createCell(22).setCellValue(proceso.getSituacion());
-            fila.createCell(23).setCellValue(proceso.getMesaPartes());
-            fila.createCell(24).setCellValue(proceso.getGrado());
+            fila.createCell(3).setCellValue(proceso.getTipo());
+            fila.createCell(4).setCellValue(proceso.getSituacion());
+            fila.createCell(5).setCellValue(proceso.getCIP());
+            fila.createCell(6).setCellValue(proceso.getExpediente());
+            fila.createCell(7).setCellValue(proceso.getNumeroResolucion());
+            fila.createCell(8).setCellValue(proceso.getBeneficiario());
+            fila.createCell(9).setCellValue(proceso.getTipoPago());
+            fila.createCell(10).setCellValue(proceso.getOficio());
+            fila.createCell(11).setCellValue(proceso.getBanco());
+            fila.createCell(12).setCellValue(proceso.getMesaPartes());
+            fila.createCell(13).setCellValue(proceso.getGrado());
+            fila.createCell(14).setCellValue(proceso.getMonto());
+            fila.createCell(15).setCellValue(proceso.getCuotas());
         }
         for (int colNum = 0; colNum < fila.getLastCellNum(); colNum++) {
             workbook.getSheetAt(0).autoSizeColumn(colNum);
